@@ -1,0 +1,104 @@
+{
+  "collection_file_counts": {
+    "project": 219,
+    "data": 139,
+    "sources_part_1": 190,
+    "sources_part_2": 48
+  },
+  "all_input_files": 596,
+  "research_source_registry_entries": 223,
+  "research_source_pdfs": 222,
+  "research_source_html_files": 1,
+  "substantive_pdf_files_including_data_documentation": 226,
+  "pdf_pages": 20253,
+  "pdf_words_after_ocr_fallback": 9395322,
+  "pdf_status_counts": {
+    "ok": 226
+  },
+  "ocr_fallbacks": [
+    {
+      "path": "sources_part_1/08. About Temperament and Its Theories/07. Chess-Thomas-Temperament-and-its-functional-significance.pdf",
+      "pages": 33,
+      "words": 24205,
+      "method": "page_image_tesseract_ocr"
+    },
+    {
+      "path": "sources_part_1/08. About Temperament and Its Theories/12 .Measrmnt_of_temp_in_Infancy.pdf",
+      "pages": 10,
+      "words": 6530,
+      "method": "ocrmypdf_tesseract"
+    }
+  ],
+  "exact_pdf_duplicate_groups": [
+    [
+      "sources_part_1/01. About, Pros, Cons of DSM/10. From diagnosis to dialogue – reconsidering the DSM as a conversation piece in mental health care a hypothesis and theory.pdf",
+      "sources_part_1/01. About, Pros, Cons of DSM/26. From diagnosis to dialogue – reconsidering the DSM as a conversation piece in mental health care_a hypothesis and theory.pdf"
+    ],
+    [
+      "sources_part_1/01. About, Pros, Cons of DSM/22. Diagnosing the diagnostic and statistical manual of mental disorders.pdf",
+      "sources_part_1/01. About, Pros, Cons of DSM/32. Diagnosing the diagnostic and statistical manual of mental disorders.pdf"
+    ],
+    [
+      "sources_part_1/07. About Motivation & Emotions/03. Evolving Concepts of Emotion and Motivation.pdf",
+      "sources_part_1/07. About Motivation & Emotions/06. Evolving Concepts of Emotion and Motivation.pdf"
+    ],
+    [
+      "sources_part_1/07. About Motivation & Emotions/04. The importance of emotion in theories of motivation_empirical, methodological, and theoretical considerations from a goal theory perspective.pdf",
+      "sources_part_1/07. About Motivation & Emotions/09. The importance of emotion in theories of motivation_empirical, methodological, and theoretical considerations from a goal theory perspective.pdf"
+    ],
+    [
+      "sources_part_1/08. About Temperament and Its Theories/08. Interrelationships of the Rothbart's temperament model constructs with revised-reinforcement sensitivity theory constructs.pdf",
+      "sources_part_1/08. About Temperament and Its Theories/13. Interrelationships of the Rothbart's temperament model constructs with revised-reinforcement sensitivity theory constructs.pdf"
+    ]
+  ],
+  "metadata_stub_count": 46,
+  "metadata_stubs": [
+    "__MACOSX/._retrospective_v1",
+    "__MACOSX/recovery_v1/._recovery_findings.md",
+    "__MACOSX/recovery_v1/._recovery_curves.png",
+    "__MACOSX/recovery_v1/._recovery_results.json",
+    "__MACOSX/synthetic_v1/._synthetic_overview.png",
+    "__MACOSX/synthetic_v1/._manifest.json",
+    "__MACOSX/synthetic_v1/._summary.json",
+    "__MACOSX/retrospective_v1/._ipip_bank",
+    "__MACOSX/retrospective_v1/._kossakowski_esm",
+    "__MACOSX/retrospective_v1/._reference_pdfs",
+    "__MACOSX/retrospective_v1/._.DS_Store",
+    "__MACOSX/retrospective_v1/._ipip_neo_johnson",
+    "__MACOSX/retrospective_v1/._SOURCES.md",
+    "__MACOSX/retrospective_v1/reference_pdfs/._Johnson2014_IPIP-NEO-120.pdf",
+    "__MACOSX/retrospective_v1/reference_pdfs/._Kossakowski2017_datapaper_uva.pdf",
+    "__MACOSX/retrospective_v1/ipip_bank/._IPIP-NEO-PI-R_items.html",
+    "__MACOSX/retrospective_v1/ipip_bank/._BigFive_broad_key.html",
+    "__MACOSX/retrospective_v1/ipip_bank/._NEO_scoring_key.html",
+    "__MACOSX/retrospective_v1/ipip_bank/._Alphabetical_item_list.html",
+    "__MACOSX/retrospective_v1/kossakowski_esm/._ESMdata",
+    "__MACOSX/retrospective_v1/kossakowski_esm/._ESMdata.zip",
+    "__MACOSX/retrospective_v1/ipip_neo_johnson/._scoring_key",
+    "__MACOSX/retrospective_v1/ipip_neo_johnson/._DAT20993.doc",
+    "__MACOSX/retrospective_v1/ipip_neo_johnson/._DAT120.doc",
+    "__MACOSX/retrospective_v1/ipip_neo_johnson/._DAT300.doc",
+    "__MACOSX/retrospective_v1/ipip_neo_johnson/._data_2005_validity",
+    "__MACOSX/retrospective_v1/ipip_neo_johnson/._.DS_Store",
+    "__MACOSX/retrospective_v1/ipip_neo_johnson/._data_120_300",
+    "__MACOSX/retrospective_v1/kossakowski_esm/ESMdata/._ESMdata.xlsx",
+    "__MACOSX/retrospective_v1/kossakowski_esm/ESMdata/._ESMdata.csv",
+    "__MACOSX/retrospective_v1/kossakowski_esm/ESMdata/._ESMdata.txt",
+    "__MACOSX/retrospective_v1/kossakowski_esm/ESMdata/._~$ESMdata_Fixed.xlsx",
+    "__MACOSX/retrospective_v1/kossakowski_esm/ESMdata/._MissingnessMomentaryItems.pdf",
+    "__MACOSX/retrospective_v1/kossakowski_esm/ESMdata/._Codebook.pdf",
+    "__MACOSX/retrospective_v1/ipip_neo_johnson/scoring_key/._IPIP-NEO-120_Questionnaire.docx",
+    "__MACOSX/retrospective_v1/ipip_neo_johnson/scoring_key/._IPIP-NEO-300_scoring_tool.xlsx",
+    "__MACOSX/retrospective_v1/ipip_neo_johnson/scoring_key/._IPIP-NEO-120_Scoring_Tool.xls",
+    "__MACOSX/retrospective_v1/ipip_neo_johnson/scoring_key/._IPIP-NEO-ItemKey.xls",
+    "__MACOSX/retrospective_v1/ipip_neo_johnson/scoring_key/._IPIP-NEO-300_Questionnaire.docx",
+    "__MACOSX/retrospective_v1/ipip_neo_johnson/data_120_300/._IPIP120.dat",
+    "__MACOSX/retrospective_v1/ipip_neo_johnson/data_120_300/._IPIP300.por.zip",
+    "__MACOSX/retrospective_v1/ipip_neo_johnson/data_120_300/._IPIP300.dat",
+    "__MACOSX/retrospective_v1/ipip_neo_johnson/data_120_300/._IPIP120.por.zip",
+    "__MACOSX/retrospective_v1/ipip_neo_johnson/data_2005_validity/._ipip20993.sav",
+    "__MACOSX/retrospective_v1/ipip_neo_johnson/data_2005_validity/._ipip20993.por",
+    "__MACOSX/retrospective_v1/ipip_neo_johnson/data_2005_validity/._ipip20993.dat"
+  ],
+  "scope_note": "Word counts are token-like whitespace counts used only to verify text access; they are not bibliometric measures. Exact duplicates remain registered but must not be counted as independent evidence."
+}

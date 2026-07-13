@@ -1,0 +1,150 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/upg/batch-k/application-contract.schema.json",
+  "title": "UPG Batch K deterministic application envelope",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["input", "output"],
+  "properties": {
+    "input": {"$ref": "#/$defs/input"},
+    "output": {"$ref": "#/$defs/output"}
+  },
+  "$defs": {
+    "input": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["model_version", "question", "consent", "goals_constraints", "observations", "measurement_map", "controls", "context_events", "established_assessment", "risk_protocol"],
+      "properties": {
+        "model_version": {"type": "string", "minLength": 1},
+        "question": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["user_role", "decision", "horizon"],
+          "properties": {
+            "user_role": {"enum": ["researcher", "psychotherapist", "psychiatrist", "patient", "family", "community_user", "team"]},
+            "decision": {"type": "string", "minLength": 1},
+            "horizon": {"type": "string", "minLength": 1}
+          }
+        },
+        "consent": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["streams_allowed", "streams_revoked"],
+          "properties": {
+            "streams_allowed": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+            "streams_revoked": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+            "expires": {"type": ["string", "null"], "format": "date-time"}
+          }
+        },
+        "goals_constraints": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["goals", "refusals", "burden_limits"],
+          "properties": {
+            "goals": {"type": "array", "items": {"type": "string"}},
+            "refusals": {"type": "array", "items": {"type": "string"}},
+            "burden_limits": {"type": "array", "items": {"type": "string"}}
+          }
+        },
+        "observations": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["instrument_item", "timestamp", "raw_value", "provenance"],
+            "properties": {
+              "instrument_item": {"type": "string"},
+              "timestamp": {"type": "string", "format": "date-time"},
+              "raw_value": {},
+              "missing_reason": {"type": ["string", "null"]},
+              "provenance": {"type": "string"}
+            }
+          }
+        },
+        "measurement_map": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["version", "item_to_node_rules"],
+          "properties": {
+            "version": {"type": "string"},
+            "item_to_node_rules": {"type": "array", "items": {"type": "object"}}
+          }
+        },
+        "controls": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["type", "status"],
+            "properties": {
+              "type": {"type": "string"},
+              "status": {"enum": ["planned", "delivered", "missed", "unknown"]}
+            }
+          }
+        },
+        "context_events": {"type": "array", "items": {"type": "object"}},
+        "established_assessment": {
+          "type": "object",
+          "required": ["diagnoses", "medical_differential_status"],
+          "properties": {
+            "diagnoses": {"type": "array", "items": {"type": "object"}},
+            "medical_differential_status": {"type": "string"}
+          }
+        },
+        "risk_protocol": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["status", "responsible_human"],
+          "properties": {
+            "status": {"enum": ["handled_outside_model", "not_documented"]},
+            "responsible_human": {"type": "string", "minLength": 1}
+          }
+        }
+      }
+    },
+    "output": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["admissibility", "measurement_quality", "state", "structure", "hypotheses", "alternatives", "options", "monitoring", "next_information", "prohibited_inferences", "human_review_required"],
+      "properties": {
+        "admissibility": {
+          "type": "object",
+          "required": ["resolution", "state", "structure", "forecast", "reason_codes"],
+          "properties": {
+            "resolution": {"enum": ["refused", "minimal", "monitoring", "structural", "validated_prediction", "tested_impact"]},
+            "state": {"type": "boolean"},
+            "structure": {"type": "boolean"},
+            "forecast": {"type": "boolean"},
+            "reason_codes": {"type": "array", "items": {"type": "string"}}
+          }
+        },
+        "measurement_quality": {"type": "object"},
+        "state": {"type": "object"},
+        "structure": {"type": "object"},
+        "hypotheses": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["path", "evidence_level", "uncertainty", "falsifier"],
+            "properties": {
+              "path": {"type": "array", "items": {"type": "string"}},
+              "evidence_level": {"enum": ["reported", "reliable_score", "repeated_association", "time_directed_hypothesis", "replicated_perturbation", "prospective_impact"]},
+              "uncertainty": {"type": "object"},
+              "falsifier": {"type": "string", "minLength": 1}
+            }
+          }
+        },
+        "alternatives": {"type": "array", "minItems": 1, "items": {"type": "object"}},
+        "options": {"type": "array", "items": {"type": "object"}},
+        "monitoring": {"type": "object"},
+        "next_information": {"type": "array", "items": {"type": "string"}},
+        "prohibited_inferences": {
+          "type": "array",
+          "items": {"enum": ["automated_diagnosis", "emergency_triage", "causal_treatment_selection", "prescription", "cure_claim", "coercive_sole_basis"]},
+          "uniqueItems": true
+        },
+        "patient_contestations": {"type": "array", "items": {"type": "string"}},
+        "human_review_required": {"const": true}
+      }
+    }
+  }
+}

@@ -1,0 +1,293 @@
+{
+  "release": "Batch K evidence release 2026-07-12",
+  "superseded_input_excluded": "psych-lab-main(2).zip",
+  "raw_input_sha256": {
+    "psych-lab-main(1).zip": "4514b847d16b0cd9c20a1aa69c677bbaad78a7153630e9370b4137c9489569ab",
+    "Archive(1).zip": "f81f07e4b9f4de983d07f3dcc30240a3da660059510c98cd1da7de93eda488c7",
+    "8-Dimention Model Sources-Part 1.zip": "e392ef0934ff2d3dd9fe9dfea4096b431ec35c0b69446329bc0f3eaa0ebe1f33",
+    "8-Dimention Model Sources-Part 2(1).zip": "3b3b9744fe444b22957a9bf40ba3a4c65da256a1efac3c6929956a8c36e59201"
+  },
+  "test_result": "95/95 passed",
+  "files": [
+    {
+      "path": "MODEL_CARD.md",
+      "bytes": 6100,
+      "sha256": "a648d57b28e3ea0cab4dd477607e9c9db64b944b19132214331299f653f0a247"
+    },
+    {
+      "path": "README_BATCH_K.md",
+      "bytes": 2018,
+      "sha256": "856e585c555fb9cb9ecb541c8ed7453ecb21d1957d755d01014deb60707686d1"
+    },
+    {
+      "path": "audit/pdf_text_audit.csv",
+      "bytes": 51481,
+      "sha256": "67f7e182666ddd7aba488230eed1924845a29c0c41df7fe4ad5de8a21f949475"
+    },
+    {
+      "path": "audit/source_audit_summary.json",
+      "bytes": 6025,
+      "sha256": "6af23fd753cc875892441a1a4712b12c68f1021e91fec883a41dc43990c714a2"
+    },
+    {
+      "path": "batch-k-report.html",
+      "bytes": 1316081,
+      "sha256": "d4ea08b7810632fe850a47051b90b84992626a12906060f64b35479693d4332c"
+    },
+    {
+      "path": "batch_k_claim_ledger.csv",
+      "bytes": 6405,
+      "sha256": "e88b2c5ed19320e443dfe6f653b9229294e74f64a68b6a77feb4950de06b4b94"
+    },
+    {
+      "path": "batch_k_manuscript.md",
+      "bytes": 67263,
+      "sha256": "332a7bbe3af8fbf4d0f4708f72627338f7afd8e9fb650fcb612280cd2d37535e"
+    },
+    {
+      "path": "batch_k_methods_appendix.md",
+      "bytes": 12888,
+      "sha256": "2605111cac72c0c713ea4c209850748a5cbc18d1c7087422d41cdd709ce79539"
+    },
+    {
+      "path": "batch_k_source_cards.csv",
+      "bytes": 12227,
+      "sha256": "db1bc6f5e9dca63dda6913691b1dbeab81e5813fdadf0f624bc20f3e15cceaad"
+    },
+    {
+      "path": "code/audit_sources.py",
+      "bytes": 6254,
+      "sha256": "af7f9cd7dffe896c1bd6c7c0d1e0ffc4763611da5bb0effa4116a2ba992599d0"
+    },
+    {
+      "path": "code/create_manifest.py",
+      "bytes": 1494,
+      "sha256": "e78acefd6fe20c6db7e8fa95b25b4fd2aa16c22385102b901df678788e236eb8"
+    },
+    {
+      "path": "code/run_real_data_analysis.py",
+      "bytes": 25884,
+      "sha256": "640d8fc28d6cb61ea9c1c861f956af8112e31ec279df0721546775741059ace4"
+    },
+    {
+      "path": "protocols/baseline_contract.md",
+      "bytes": 4393,
+      "sha256": "30229eee61a4e087ee09ede72daff28fbad4570c147fa84b33e8c53bab3cd602"
+    },
+    {
+      "path": "protocols/data_gathering_protocol.md",
+      "bytes": 14956,
+      "sha256": "63649c89a651ee846e08207fd2b959f2a6df92b0ec9034182d2534c49ab0a211"
+    },
+    {
+      "path": "protocols/measurement_mapping.md",
+      "bytes": 6225,
+      "sha256": "f826310ead6776223fdc1d5a4444503699dac5aed7001ac0470985dccb9c1228"
+    },
+    {
+      "path": "registries/upg_dimension_edges.csv",
+      "bytes": 10006,
+      "sha256": "8b18f4cedd2c15b863089fc06e70029ae5a28a00cda5d6073a656ae3dcd24e67"
+    },
+    {
+      "path": "registries/upg_dimension_nodes.csv",
+      "bytes": 2026,
+      "sha256": "1d580e3eb2f13570da1f88435fc81d2d58c41e9e3aad8983b7670f44a4763f20"
+    },
+    {
+      "path": "registries/upg_greatgraph_edges.csv",
+      "bytes": 31954,
+      "sha256": "b3b1bf07dee3652801bdaf36a82b21e67be0ddf6bd8afe7f38aabb3521c1bc7d"
+    },
+    {
+      "path": "registries/upg_greatgraph_nodes.csv",
+      "bytes": 14469,
+      "sha256": "195388d8f15fb8c16b853c8cc8f7516b3ca29e57686f89f55aaca79726a566ed"
+    },
+    {
+      "path": "results/forecast/eval_balanced_regimes.json",
+      "bytes": 1891,
+      "sha256": "419e488728bdbbaceaca939792ae72f87755487b20ac6204c5ae835d485a71e3"
+    },
+    {
+      "path": "results/forecast/eval_clinical_realistic.json",
+      "bytes": 1884,
+      "sha256": "f9b7d5a086baa8214bab351d246b8b44283a587c2715929531a94c20502fbdfe"
+    },
+    {
+      "path": "results/forecast/eval_transition_rich.json",
+      "bytes": 2655,
+      "sha256": "5938059a93e71037edc8a94593b838dde37a71b06e56d01b8994bb2a840adac5"
+    },
+    {
+      "path": "results/forecast/forecast_comparison.png",
+      "bytes": 133444,
+      "sha256": "df8a52e44f713b8a7460d860fce98808e28f226bce1c335ba65260ae24509314"
+    },
+    {
+      "path": "results/forecast/forecast_results.json",
+      "bytes": 6997,
+      "sha256": "27d38e619d19870e721a269f63acbbfda55b28b34e5956aac8127475a1586ef6"
+    },
+    {
+      "path": "results/forecast/null_ci_transition_rich.npz",
+      "bytes": 153460,
+      "sha256": "a2233d98352d4360d7a3e620c36b1cd4d17f21a46826365d63f830a07bcef91f"
+    },
+    {
+      "path": "results/forecast/null_ci_transition_rich_training.json",
+      "bytes": 1717,
+      "sha256": "3e318d4fdbb48121069347bebc4998da4a588325e8ae30ad7d2d7f7cba0fbfd2"
+    },
+    {
+      "path": "results/forecast/tf_balanced_regimes.npz",
+      "bytes": 174331,
+      "sha256": "7f3d4c7bc9438d146f368e047202dbf38e2fdd3d0492c1a58a244ea905f7263f"
+    },
+    {
+      "path": "results/forecast/tf_balanced_regimes_training.json",
+      "bytes": 5314,
+      "sha256": "16afdaeb0232610817f39e7d5fb19045e593b08aa2cad5300e4f75540c139178"
+    },
+    {
+      "path": "results/forecast/tf_clinical_realistic.npz",
+      "bytes": 174264,
+      "sha256": "638669a2a0f66e329ecfca930fd00f2647d1c18cecd8c98608df1fc58dba7d92"
+    },
+    {
+      "path": "results/forecast/tf_clinical_realistic_training.json",
+      "bytes": 2101,
+      "sha256": "9f43811dd393e77f12640a645c0d23663ddef2ec5f03c2043155bdfae9b4602a"
+    },
+    {
+      "path": "results/forecast/tf_transition_rich.npz",
+      "bytes": 177004,
+      "sha256": "3ef08abd9e5e71c48538d097040073a266ee3189297643c24b96bee82282af33"
+    },
+    {
+      "path": "results/forecast/tf_transition_rich_training.json",
+      "bytes": 4041,
+      "sha256": "f232a999ba3c19125296461e0d3a853a851c979f6133c59fd56f34e071e17277"
+    },
+    {
+      "path": "results/forecast/training_provenance.json",
+      "bytes": 1613,
+      "sha256": "6d706ca5b388bf16cd564221befc819a1d460d73b7e6d47803d3465d97addc84"
+    },
+    {
+      "path": "results/gat/balanced_regimes_eval.json",
+      "bytes": 20612,
+      "sha256": "ca41a00c964449a216a7a52d423cefb26c07e74a7d56b9a8e92ab7c56ca8ce48"
+    },
+    {
+      "path": "results/gat/clinical_realistic_eval.json",
+      "bytes": 20857,
+      "sha256": "b14c23ce312908922f2bc874c4f42e693e445374a4bb2c679a9e7a4824ac2e80"
+    },
+    {
+      "path": "results/gat/gat_balanced_regimes.npz",
+      "bytes": 76815,
+      "sha256": "124c1166a2b448931fdb5a51bc471027c9368463b14fd88190ca12e6e437d56a"
+    },
+    {
+      "path": "results/gat/gat_balanced_regimes_training.json",
+      "bytes": 4936,
+      "sha256": "c803a7758fd9f750f0897ca6ad4c08935a9bc805213c2e798c58e525021d13a9"
+    },
+    {
+      "path": "results/gat/gat_clinical_realistic.npz",
+      "bytes": 76816,
+      "sha256": "2cbf481caca2b7ab5b770209abe446dd8bd36baaa0fd027c691a4b563e6ab734"
+    },
+    {
+      "path": "results/gat/gat_clinical_realistic_training.json",
+      "bytes": 5184,
+      "sha256": "02f1451e1706ff4c5963e6b7be230d69ac0a29c15d5dca5194bc84f6544523d2"
+    },
+    {
+      "path": "results/gat/gat_results.json",
+      "bytes": 67751,
+      "sha256": "062a6235f1ad3b267d2c1ef8f624a80ad6e12cbdbfd4ec3847634475b2bf81fa"
+    },
+    {
+      "path": "results/gat/gat_transition_rich.npz",
+      "bytes": 76836,
+      "sha256": "1f326f8b4ff467ae04c233d4e3358e84c296a6d7234a18e0882bde5c2b11a9ef"
+    },
+    {
+      "path": "results/gat/gat_transition_rich_training.json",
+      "bytes": 6459,
+      "sha256": "5123041f1b1921b08d7d4f1d4c9d718c07c9887e2e172cf6969e3c09a339b91b"
+    },
+    {
+      "path": "results/gat/gat_vs_baselines.png",
+      "bytes": 361870,
+      "sha256": "5b23c2e77c569ff6f64a3f8bd5977f0dfa2d22cbcc97b344940584c748253111"
+    },
+    {
+      "path": "results/gat/transition_rich_eval.json",
+      "bytes": 22261,
+      "sha256": "aa35165ababfdca9697407bd13d6efa43752f3b1e329ef865518d4fe65bd3898"
+    },
+    {
+      "path": "results/real_data/empirical_claims.csv",
+      "bytes": 858,
+      "sha256": "b93b5b3f19495cb18414086ddfc962c79249c07245b2a6cc00c9bc52a33c0f24"
+    },
+    {
+      "path": "results/real_data/ipip_domain_metrics.csv",
+      "bytes": 574,
+      "sha256": "781ee83374a521cb3c3bad559a918791d6dac5b44311959df21704353cda81e6"
+    },
+    {
+      "path": "results/real_data/ipip_facet_correlation.csv",
+      "bytes": 22854,
+      "sha256": "7cd2fed331bfaabfaefc9ab25182b81265d122533c8c20c213d0bdaa88de39ce"
+    },
+    {
+      "path": "results/real_data/ipip_facet_loadings.csv",
+      "bytes": 4638,
+      "sha256": "fbfaf9a97a68e1d2672b5e4bddaf7ed819864d80612e773f576326059b6f8af2"
+    },
+    {
+      "path": "results/real_data/ipip_measurement_audit.png",
+      "bytes": 67049,
+      "sha256": "4acf54987f09e2723a1670a16488920ccd83c933d553d2c5d2776c26c205e6a4"
+    },
+    {
+      "path": "results/real_data/kossakowski_phase_summary.csv",
+      "bytes": 251,
+      "sha256": "01faf87be6e3ac4de4be7d2f777fd01374e639a8a356a9bf7755de7fcf12200f"
+    },
+    {
+      "path": "results/real_data/kossakowski_real_data_audit.png",
+      "bytes": 294845,
+      "sha256": "9da2713341c0fb7e68e20e6a719ba8163cd2dd92f4b3e78521135168c4d81fd1"
+    },
+    {
+      "path": "results/real_data/kossakowski_rolling_forecasts.csv",
+      "bytes": 1063,
+      "sha256": "afe78481e1b193f1549ac3f9214096bf8b5c99d8de6d85524472c0b946f97120"
+    },
+    {
+      "path": "results/real_data/kossakowski_weekly_derived.csv",
+      "bytes": 2767,
+      "sha256": "686536226ae599ca118d5f43b6cdc1034459f96ef74b9fb77ce383afb1c0fe9e"
+    },
+    {
+      "path": "results/real_data/real_data_summary.json",
+      "bytes": 7200,
+      "sha256": "721b5cae9f4628e4f611f3df4641c5d932450ccad0c65e21846696684f7d34e3"
+    },
+    {
+      "path": "upg-evidence-gate.html",
+      "bytes": 32085,
+      "sha256": "a9e437e61ef637ce66b881fd32a0eb40c4334119529a64c64a6551332cfae79d"
+    },
+    {
+      "path": "upg_application_contract.schema.json",
+      "bytes": 6326,
+      "sha256": "1f5e983e2c577535c36fc8f42b3c1a9b540facf76455426abe738cdfe28bcd00"
+    }
+  ]
+}

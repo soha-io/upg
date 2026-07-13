@@ -1,0 +1,7 @@
+claim_id,claim,evidence_level,status,result
+K-EMP-01,IPIP domain scores are internally consistent in this archive,E2 retrospective cross-sectional,supported,IPIP domain alpha .817–.905
+K-EMP-02,A five-component solution exactly recovers every IPIP facet,E2 retrospective cross-sectional,falsified,25/30 primary loadings
+K-EMP-03,The transparent ME load tracks concurrent weekly depression in this person,E2 retrospective N=1,supported_narrowly,rho=0.625
+K-EMP-04,Rolling AR(1) predicts next-week depression change in this person,E2 retrospective N=1,not_supported,rho=-0.068
+K-EMP-05,The small multivariable model beats persistence prospectively within the series,E2 rolling-origin N=1,not_supported,RMSE 0.135 vs 0.118
+K-EMP-06,The complete UPG is clinically validated,E3 prospective required,not_tested,No full-stratum prospective cohort or trial
