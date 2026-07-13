@@ -1,0 +1,523 @@
+source,target,weight,sign,type,gate,origin
+DIS.P,DIS.SS_EMO,0.90,+,hierarchical,none,Batch A
+DIS.P,DIS.SS_PSY,0.75,+,hierarchical,none,Batch A
+DIS.P,DIS.SS_EXT,0.70,+,hierarchical,none,Batch A
+DIS.P,DIS.SP_NDV,0.60,+,hierarchical,none,Batch A
+DIS.SS_EMO,DIS.SP_INT,0.90,+,hierarchical,none,Batch A
+DIS.SS_EMO,DIS.SP_SOM,0.70,+,hierarchical,none,Batch A
+DIS.SS_PSY,DIS.SP_THO,0.85,+,hierarchical,none,Batch A
+DIS.SS_PSY,DIS.SP_DET,0.75,+,hierarchical,none,Batch A
+DIS.SS_EXT,DIS.SP_DIS,0.85,+,hierarchical,none,Batch A
+DIS.SS_EXT,DIS.SP_ANT,0.80,+,hierarchical,none,Batch A
+DIS.SP_INT,DIS.SF_DIST,0.90,+,hierarchical,none,Batch A
+DIS.SP_INT,DIS.SF_FEAR,0.80,+,hierarchical,none,Batch A
+DIS.SP_INT,DIS.SF_EAT,0.60,+,hierarchical,none,Batch A
+DIS.SP_INT,DIS.SF_SEX,0.45,+,hierarchical,none,Batch A
+DIS.SP_THO,DIS.SF_MAN,0.60,+,hierarchical,none,Batch A
+DIS.SP_DIS,DIS.SF_SUB,0.80,+,hierarchical,none,Batch A
+DIS.SP_DIS,DIS.SF_ASB,0.75,+,hierarchical,none,Batch A
+DIS.SP_INT,DIS.SP_SOM,0.60,+,cross-spectral,none,Batch A
+DIS.SP_INT,DIS.SP_DET,0.50,+,cross-spectral,none,Batch A
+DIS.SP_INT,DIS.SP_THO,0.45,+,cross-spectral,none,Batch A
+DIS.SP_INT,DIS.SP_DIS,0.40,+,cross-spectral,none,Batch A
+DIS.SP_THO,DIS.SP_DET,0.55,+,cross-spectral,none,Batch A
+DIS.SP_DIS,DIS.SP_ANT,0.70,+,cross-spectral,none,Batch A
+DIS.SP_DET,DIS.SP_ANT,0.35,+,cross-spectral,none,Batch A
+DIS.SP_SOM,DIS.SP_THO,0.30,+,cross-spectral,none,Batch A
+DIS.SP_NDV,DIS.SP_DIS,0.45,+,cross-spectral,none,Batch A
+DIS.SP_NDV,DIS.SP_DET,0.40,+,cross-spectral,none,Batch A
+DIS.SF_MAN,DIS.SF_DIST,0.45,+,cross-subfactor,none,Batch A
+DIS.SF_DIST,DIS.SF_FEAR,0.70,+,cross-subfactor,none,Batch A
+DIS.SF_SUB,DIS.SF_ASB,0.60,+,cross-subfactor,none,Batch A
+DIS.SP_INT,DIS.SP_INT,0.30,+,autoregressive,none,Batch A
+DIS.SP_DIS,DIS.SP_DIS,0.25,+,autoregressive,none,Batch A
+THER.N01,THER.N02,0.90,+,sequential,none,Batch B
+THER.N02,THER.N03,0.90,+,sequential,none,Batch B
+THER.N03,THER.N04,0.85,+,sequential,none,Batch B
+THER.N04,THER.N05,0.85,+,sequential,none,Batch B
+THER.N05,THER.N06,0.85,+,sequential,none,Batch B
+THER.N06,THER.N07,0.90,+,sequential,none,Batch B
+THER.N07,THER.N08,0.80,+,sequential,none,Batch B
+THER.N08,THER.N09,0.85,+,sequential,none,Batch B
+THER.N09,THER.N10,0.90,+,sequential,none,Batch B
+THER.N10,THER.N05,0.85,+,feedback,none,Batch B
+THER.N10,THER.N11,0.75,+,sequential,none,Batch B
+THER.N03,THER.N07,0.80,+,cross-cutting,none,Batch B
+THER.N07,THER.N03,0.60,+,cross-cutting,none,Batch B
+THER.N09,THER.N03,0.70,+,feedback,none,Batch B
+THER.N09,THER.N02,0.60,+,feedback,none,Batch B
+THER.N10,THER.N06,0.65,+,feedback,none,Batch B
+THER.N10,THER.N07,0.70,+,feedback,none,Batch B
+THER.N11,THER.N01,0.40,+,feedback,none,Batch B
+THER.N03,THER.N03,0.60,+,autoregressive,none,Batch B
+THER.N07,THER.N07,0.40,+,autoregressive,none,Batch B
+THER.N02,THER.N07,-0.50,-,cross-cutting,none,Batch B
+THER.S0501,THER.S0502,0.80,+,subgraph,none,Batch B
+THER.S0502,THER.S0503,0.85,+,subgraph,none,Batch B
+THER.S0503,THER.S0504,0.80,+,subgraph,none,Batch B
+THER.S0504,THER.S0505,0.80,+,subgraph,none,Batch B
+THER.S0505,THER.S0506,0.85,+,subgraph,none,Batch B
+THER.S0506,THER.S0501,0.75,+,subgraph-feedback,none,Batch B
+THER.S0507,THER.S0502,0.60,+,subgraph,none,Batch B
+THER.S0507,THER.S0504,0.55,+,subgraph,none,Batch B
+THER.S0508,THER.S0506,-0.55,-,subgraph,none,Batch B
+DEV.D,DEV.DOM_PHY,0.85,+,hierarchical,none,Batch C
+DEV.D,DEV.DOM_COG,0.85,+,hierarchical,none,Batch C
+DEV.D,DEV.DOM_LAN,0.80,+,hierarchical,none,Batch C
+DEV.D,DEV.DOM_EMO,0.85,+,hierarchical,none,Batch C
+DEV.D,DEV.DOM_SOC,0.85,+,hierarchical,none,Batch C
+DEV.D,DEV.DOM_MOR,0.70,+,hierarchical,none,Batch C
+DEV.D,DEV.DOM_SLF,0.80,+,hierarchical,none,Batch C
+DEV.DOM_PHY,DEV.DOM_COG,0.60,+,cascade,infancy-peak,Batch C
+DEV.DOM_COG,DEV.DOM_LAN,0.65,+,cascade,early-childhood-peak,Batch C
+DEV.DOM_LAN,DEV.DOM_SOC,0.60,+,cascade,childhood,Batch C
+DEV.DOM_LAN,DEV.DOM_COG,0.55,+,cascade,childhood,Batch C
+DEV.DOM_EMO,DEV.DOM_SOC,0.65,+,cascade,none,Batch C
+DEV.DOM_SOC,DEV.DOM_EMO,0.60,+,cascade,infancy-peak,Batch C
+DEV.DOM_SOC,DEV.DOM_MOR,0.55,+,cascade,childhood-adolescence,Batch C
+DEV.DOM_COG,DEV.DOM_MOR,0.55,+,cascade,childhood-adolescence,Batch C
+DEV.DOM_SOC,DEV.DOM_SLF,0.65,+,cascade,adolescence-peak,Batch C
+DEV.DOM_COG,DEV.DOM_SLF,0.50,+,cascade,adolescence-peak,Batch C
+DEV.DOM_SLF,DEV.DOM_SOC,0.45,+,cascade,adolescence-adulthood,Batch C
+DEV.CTX_CARE,DEV.DOM_SOC,0.75,+,transactional,infancy-peak,Batch C
+DEV.CTX_CARE,DEV.DOM_EMO,0.65,+,transactional,infancy-peak,Batch C
+DEV.CTX_CARE,DEV.DOM_LAN,0.60,+,transactional,sensitive-period,Batch C
+DEV.DOM_EMO,DEV.CTX_CARE,0.50,+,transactional,infancy-peak,Batch C
+DEV.DOM_PHY,DEV.DOM_PHY,0.40,+,autoregressive,none,Batch C
+DEV.DOM_COG,DEV.DOM_COG,0.50,+,autoregressive,none,Batch C
+DEV.DOM_SOC,DEV.DOM_SOC,0.45,+,autoregressive,none,Batch C
+DEV.SUB_COG1,DEV.SUB_COG2,0.80,+,stage-sequence,maturation-gated,Batch C
+DEV.SUB_COG2,DEV.SUB_COG3,0.80,+,stage-sequence,maturation-gated,Batch C
+DEV.SUB_COG3,DEV.SUB_COG4,0.60,+,stage-sequence,maturation-gated,Batch C
+DEV.SUB_SOC1,DEV.SUB_SOC2,0.75,+,stage-sequence,infancy-peak,Batch C
+DEV.SUB_SOC2,DEV.SUB_SOC3,0.55,+,cascade,childhood,Batch C
+DEV.SUB_SOC2,DEV.DOM_SLF,0.50,+,cascade,adolescence-peak,Batch C
+PER.P,PER.LAYER_TRT,0.85,+,hierarchical,none,Batch D
+PER.P,PER.LAYER_ADP,0.85,+,hierarchical,none,Batch D
+PER.P,PER.LAYER_NAR,0.80,+,hierarchical,none,Batch D
+PER.LAYER_TRT,PER.TRT_N,0.80,+,hierarchical,none,Batch D
+PER.LAYER_TRT,PER.TRT_E,0.80,+,hierarchical,none,Batch D
+PER.LAYER_TRT,PER.TRT_O,0.80,+,hierarchical,none,Batch D
+PER.LAYER_TRT,PER.TRT_A,0.80,+,hierarchical,none,Batch D
+PER.LAYER_TRT,PER.TRT_C,0.80,+,hierarchical,none,Batch D
+PER.TRT_N,PER.N1,0.75,+,hierarchical,none,Batch D
+PER.TRT_N,PER.N2,0.75,+,hierarchical,none,Batch D
+PER.TRT_N,PER.N3,0.75,+,hierarchical,none,Batch D
+PER.TRT_N,PER.N4,0.75,+,hierarchical,none,Batch D
+PER.TRT_N,PER.N5,0.75,+,hierarchical,none,Batch D
+PER.TRT_N,PER.N6,0.75,+,hierarchical,none,Batch D
+PER.TRT_E,PER.E1,0.75,+,hierarchical,none,Batch D
+PER.TRT_E,PER.E2,0.75,+,hierarchical,none,Batch D
+PER.TRT_E,PER.E3,0.75,+,hierarchical,none,Batch D
+PER.TRT_E,PER.E4,0.75,+,hierarchical,none,Batch D
+PER.TRT_E,PER.E5,0.75,+,hierarchical,none,Batch D
+PER.TRT_E,PER.E6,0.75,+,hierarchical,none,Batch D
+PER.TRT_O,PER.O1,0.75,+,hierarchical,none,Batch D
+PER.TRT_O,PER.O2,0.75,+,hierarchical,none,Batch D
+PER.TRT_O,PER.O3,0.75,+,hierarchical,none,Batch D
+PER.TRT_O,PER.O4,0.75,+,hierarchical,none,Batch D
+PER.TRT_O,PER.O5,0.75,+,hierarchical,none,Batch D
+PER.TRT_O,PER.O6,0.75,+,hierarchical,none,Batch D
+PER.TRT_A,PER.A1,0.75,+,hierarchical,none,Batch D
+PER.TRT_A,PER.A2,0.75,+,hierarchical,none,Batch D
+PER.TRT_A,PER.A3,0.75,+,hierarchical,none,Batch D
+PER.TRT_A,PER.A4,0.75,+,hierarchical,none,Batch D
+PER.TRT_A,PER.A5,0.75,+,hierarchical,none,Batch D
+PER.TRT_A,PER.A6,0.75,+,hierarchical,none,Batch D
+PER.TRT_C,PER.C1,0.75,+,hierarchical,none,Batch D
+PER.TRT_C,PER.C2,0.75,+,hierarchical,none,Batch D
+PER.TRT_C,PER.C3,0.75,+,hierarchical,none,Batch D
+PER.TRT_C,PER.C4,0.75,+,hierarchical,none,Batch D
+PER.TRT_C,PER.C5,0.75,+,hierarchical,none,Batch D
+PER.TRT_C,PER.C6,0.75,+,hierarchical,none,Batch D
+PER.TEMP_IN,PER.LAYER_TRT,0.70,+,cascade,childhood-peak,Batch D
+PER.LAYER_TRT,PER.LAYER_ADP,0.65,+,cascade,none,Batch D
+PER.LAYER_ADP,PER.LAYER_NAR,0.55,+,cascade,adolescence-adulthood,Batch D
+PER.LAYER_NAR,PER.LAYER_ADP,0.45,+,transactional,adulthood,Batch D
+PER.LAYER_TRT,PER.ST_STATE,0.70,+,cascade,none,Batch D
+PER.LAYER_ADP,PER.ST_STATE,0.55,+,cascade,none,Batch D
+PER.CTX_SIT,PER.ST_STATE,0.60,+,cascade,none,Batch D
+PER.LAYER_TRT,PER.MECH_SEL,0.60,+,cascade,none,Batch D
+PER.MECH_SEL,PER.CTX_SIT,0.60,+,cascade,none,Batch D
+PER.LAYER_TRT,PER.MECH_EVO,0.50,+,cascade,none,Batch D
+PER.MECH_EVO,PER.CTX_SIT,0.50,+,cascade,none,Batch D
+PER.CTX_SIT,PER.MECH_REA,0.55,+,cascade,none,Batch D
+PER.MECH_REA,PER.ST_STATE,0.55,+,cascade,none,Batch D
+PER.LAYER_TRT,PER.MECH_INS,0.60,+,cascade,none,Batch D
+PER.MECH_INS,PER.OUT_LIFE,0.60,+,cascade,none,Batch D
+PER.TRT_N,PER.OUT_LIFE,0.45,-,cascade,none,Batch D
+PER.TRT_C,PER.OUT_LIFE,0.50,+,cascade,none,Batch D
+PER.SUB_ADP1,PER.MECH_CYB,0.60,+,cascade,none,Batch D
+PER.MECH_CYB,PER.ST_STATE,0.55,+,cascade,none,Batch D
+PER.OUT_LIFE,PER.MECH_CYB,0.45,+,feedback,none,Batch D
+PER.OUT_LIFE,PER.LAYER_NAR,0.40,+,cascade,adulthood,Batch D
+PER.OUT_LIFE,PER.LAYER_TRT,0.35,+,transactional,age-increasing,Batch D
+PER.CTX_SIT,PER.LAYER_ADP,0.50,+,transactional,none,Batch D
+PER.LAYER_TRT,PER.LAYER_TRT,0.70,+,autoregressive,age-increasing,Batch D
+PER.LAYER_NAR,PER.LAYER_NAR,0.50,+,autoregressive,none,Batch D
+PER.ST_STATE,PER.LAYER_TRT,0.30,+,feedback,none,Batch D
+TEM.T,TEM.DIM_NA,0.85,+,hierarchical,none,Batch E
+TEM.T,TEM.DIM_SU,0.85,+,hierarchical,none,Batch E
+TEM.T,TEM.DIM_EC,0.85,+,hierarchical,none,Batch E
+TEM.T,TEM.TYPE,0.70,+,hierarchical,none,Batch E
+TEM.DIM_NA,TEM.SUB_NA1,0.75,+,hierarchical,none,Batch E
+TEM.DIM_NA,TEM.SUB_NA2,0.75,+,hierarchical,none,Batch E
+TEM.DIM_NA,TEM.SUB_NA3,0.70,+,hierarchical,none,Batch E
+TEM.DIM_NA,TEM.SUB_NA4,0.70,+,hierarchical,none,Batch E
+TEM.DIM_NA,TEM.SUB_NA5,0.65,-,hierarchical,none,Batch E
+TEM.DIM_SU,TEM.SUB_SU1,0.70,+,hierarchical,none,Batch E
+TEM.DIM_SU,TEM.SUB_SU2,0.70,+,hierarchical,none,Batch E
+TEM.DIM_SU,TEM.SUB_SU3,0.75,+,hierarchical,none,Batch E
+TEM.DIM_SU,TEM.SUB_SU4,0.70,+,hierarchical,none,Batch E
+TEM.DIM_EC,TEM.SUB_EC1,0.75,+,hierarchical,none,Batch E
+TEM.DIM_EC,TEM.SUB_EC2,0.75,+,hierarchical,none,Batch E
+TEM.DIM_EC,TEM.SUB_EC3,0.60,+,hierarchical,none,Batch E
+TEM.DIM_EC,TEM.SUB_EC4,0.60,+,hierarchical,none,Batch E
+TEM.TYPE,TEM.SUB_TY1,0.75,+,hierarchical,none,Batch E
+TEM.TYPE,TEM.SUB_TY2,0.75,+,hierarchical,none,Batch E
+TEM.TYPE,TEM.SUB_TY3,0.70,+,hierarchical,none,Batch E
+TEM.TYPE,TEM.SUB_TY4,0.75,+,hierarchical,none,Batch E
+TEM.BIO_GEN,TEM.DIM_NA,0.65,+,cascade,childhood-peak,Batch E
+TEM.BIO_GEN,TEM.DIM_SU,0.65,+,cascade,childhood-peak,Batch E
+TEM.BIO_GEN,TEM.DIM_EC,0.60,+,cascade,maturation-gated,Batch E
+TEM.MECH_MAT,TEM.DIM_EC,0.60,+,cascade,childhood-adolescence,Batch E
+TEM.DIM_EC,TEM.DIM_NA,0.55,-,cascade,maturation-gated,Batch E
+TEM.DIM_EC,TEM.DIM_SU,0.35,-,cascade,maturation-gated,Batch E
+TEM.DIM_NA,TEM.DIM_EC,0.35,-,cascade,none,Batch E
+TEM.DIM_NA,TEM.OUT_ADJ,0.60,+,cascade,none,Batch E
+TEM.DIM_SU,TEM.OUT_ADJ,0.35,+,cascade,childhood,Batch E
+TEM.DIM_EC,TEM.OUT_ADJ,0.55,-,cascade,none,Batch E
+TEM.MECH_TXT,TEM.OUT_ADJ,0.45,-,moderation,none,Batch E
+TEM.DIM_EC,TEM.MECH_TXT,0.55,+,cascade,none,Batch E
+TEM.CTX_CARE,TEM.MECH_TXE,0.55,+,cascade,none,Batch E
+TEM.MECH_TXE,TEM.OUT_ADJ,0.50,-,moderation,none,Batch E
+TEM.DIM_NA,TEM.FIT,0.55,-,transactional,none,Batch E
+TEM.DIM_SU,TEM.FIT,0.35,-,transactional,none,Batch E
+TEM.CTX_CARE,TEM.FIT,0.65,+,transactional,none,Batch E
+TEM.FIT,TEM.OUT_ADJ,0.60,-,cascade,none,Batch E
+TEM.DIM_NA,TEM.CTX_CARE,0.45,+,transactional,infancy-peak,Batch E
+TEM.DIM_NA,TEM.PERS_IF,0.65,+,cascade,infancy-to-adulthood,Batch E
+TEM.DIM_SU,TEM.PERS_IF,0.65,+,cascade,infancy-to-adulthood,Batch E
+TEM.DIM_EC,TEM.PERS_IF,0.65,+,cascade,infancy-to-adulthood,Batch E
+TEM.DIM_NA,TEM.DIM_NA,0.45,+,autoregressive,age-increasing,Batch E
+TEM.DIM_SU,TEM.DIM_SU,0.45,+,autoregressive,age-increasing,Batch E
+TEM.DIM_EC,TEM.DIM_EC,0.50,+,autoregressive,age-increasing,Batch E
+TEM.SUB_TY4,TEM.OUT_ADJ,0.50,+,cascade,childhood-adolescence,Batch E
+NEED.N,NEED.NEED_PHY,0.85,+,hierarchical,none,Batch F
+NEED.N,NEED.NEED_SAF,0.80,+,hierarchical,none,Batch F
+NEED.N,NEED.NEED_REL,0.85,+,hierarchical,none,Batch F
+NEED.N,NEED.NEED_EST,0.75,+,hierarchical,none,Batch F
+NEED.N,NEED.NEED_COM,0.85,+,hierarchical,none,Batch F
+NEED.N,NEED.NEED_AUT,0.85,+,hierarchical,none,Batch F
+NEED.N,NEED.NEED_MEA,0.70,+,hierarchical,none,Batch F
+NEED.NEED_PHY,NEED.SUB_PHY1,0.80,+,hierarchical,none,Batch F
+NEED.NEED_PHY,NEED.SUB_PHY2,0.75,+,hierarchical,none,Batch F
+NEED.NEED_SAF,NEED.SUB_SAF1,0.80,+,hierarchical,none,Batch F
+NEED.NEED_SAF,NEED.SUB_SAF2,0.70,+,hierarchical,none,Batch F
+NEED.NEED_REL,NEED.SUB_REL1,0.80,+,hierarchical,none,Batch F
+NEED.NEED_REL,NEED.SUB_REL2,0.75,+,hierarchical,none,Batch F
+NEED.NEED_REL,NEED.SUB_REL3,0.65,+,hierarchical,life-stage,Batch F
+NEED.NEED_EST,NEED.SUB_EST1,0.75,+,hierarchical,none,Batch F
+NEED.NEED_EST,NEED.SUB_EST2,0.75,+,hierarchical,none,Batch F
+NEED.NEED_COM,NEED.SUB_COM1,0.80,+,hierarchical,none,Batch F
+NEED.NEED_COM,NEED.SUB_COM2,0.75,+,hierarchical,none,Batch F
+NEED.NEED_AUT,NEED.SUB_AUT1,0.80,+,hierarchical,none,Batch F
+NEED.NEED_AUT,NEED.SUB_AUT2,0.75,+,hierarchical,none,Batch F
+NEED.NEED_MEA,NEED.SUB_MEA1,0.80,+,hierarchical,none,Batch F
+NEED.NEED_MEA,NEED.SUB_MEA2,0.75,+,hierarchical,none,Batch F
+NEED.NEED_PHY,NEED.SAT,0.60,+,cascade,none,Batch F
+NEED.NEED_SAF,NEED.SAT,0.55,+,cascade,none,Batch F
+NEED.NEED_REL,NEED.SAT,0.65,+,cascade,none,Batch F
+NEED.NEED_EST,NEED.SAT,0.55,+,cascade,none,Batch F
+NEED.NEED_COM,NEED.SAT,0.65,+,cascade,none,Batch F
+NEED.NEED_AUT,NEED.SAT,0.65,+,cascade,none,Batch F
+NEED.NEED_MEA,NEED.SAT,0.60,+,cascade,none,Batch F
+NEED.NEED_PHY,NEED.FRU,0.60,+,cascade,none,Batch F
+NEED.NEED_SAF,NEED.FRU,0.60,+,cascade,none,Batch F
+NEED.NEED_REL,NEED.FRU,0.65,+,cascade,none,Batch F
+NEED.NEED_EST,NEED.FRU,0.55,+,cascade,none,Batch F
+NEED.NEED_COM,NEED.FRU,0.60,+,cascade,none,Batch F
+NEED.NEED_AUT,NEED.FRU,0.65,+,cascade,none,Batch F
+NEED.NEED_MEA,NEED.FRU,0.55,+,cascade,none,Batch F
+NEED.CTX_ENV,NEED.SAT,0.65,+,transactional,none,Batch F
+NEED.CTX_ENV,NEED.FRU,0.60,+,transactional,none,Batch F
+NEED.SAT,NEED.OUT_WB,0.70,+,cascade,none,Batch F
+NEED.SAT,NEED.OUT_IB,0.35,-,cascade,none,Batch F
+NEED.FRU,NEED.OUT_IB,0.70,+,cascade,none,Batch F
+NEED.FRU,NEED.OUT_WB,0.35,-,cascade,none,Batch F
+NEED.SAT,NEED.MOT_IF,0.60,+,cascade,none,Batch F
+NEED.FRU,NEED.MOT_IF,0.50,+,cascade,none,Batch F
+NEED.FRU,NEED.MECH_SUB,0.55,+,cascade,none,Batch F
+NEED.MECH_SUB,NEED.OUT_IB,0.40,+,cascade,none,Batch F
+NEED.NEED_PHY,NEED.MECH_PRI,0.70,+,cascade,none,Batch F
+NEED.NEED_SAF,NEED.MECH_PRI,0.65,+,cascade,situational-trigger,Batch F
+NEED.NEED_REL,NEED.MECH_PRI,0.50,+,cascade,life-stage,Batch F
+NEED.NEED_EST,NEED.MECH_PRI,0.45,+,cascade,life-stage,Batch F
+NEED.MECH_PRI,NEED.MOT_IF,0.65,+,cascade,none,Batch F
+NEED.PERS_IF,NEED.MECH_STR,0.60,+,cascade,acquired-over-development,Batch F
+NEED.MECH_STR,NEED.MECH_PRI,0.55,+,cascade,none,Batch F
+NEED.MECH_STR,NEED.MOT_IF,0.55,+,cascade,none,Batch F
+NEED.SAT,NEED.SAT,0.45,+,autoregressive,none,Batch F
+NEED.FRU,NEED.FRU,0.50,+,autoregressive,none,Batch F
+NEED.OUT_WB,NEED.CTX_ENV,0.35,+,transactional,none,Batch F
+ME.ME,ME.APPR,0.90,+,hierarchical,none,Batch G
+ME.ME,ME.MOT,0.90,+,hierarchical,none,Batch G
+ME.ME,ME.EMO,0.90,+,hierarchical,none,Batch G
+ME.ME,ME.BAS,0.80,+,hierarchical,none,Batch G
+ME.ME,ME.AVD,0.80,+,hierarchical,none,Batch G
+ME.APPR,ME.SUB_APP1,0.85,+,hierarchical,none,Batch G
+ME.APPR,ME.SUB_APP2,0.80,+,hierarchical,none,Batch G
+ME.MOT,ME.SUB_MOT1,0.85,+,hierarchical,none,Batch G
+ME.MOT,ME.SUB_MOT2,0.85,+,hierarchical,none,Batch G
+ME.MOT,ME.SUB_MOT3,0.80,+,hierarchical,none,Batch G
+ME.EMO,ME.SUB_EMO1,0.85,+,hierarchical,none,Batch G
+ME.EMO,ME.SUB_EMO2,0.80,+,hierarchical,none,Batch G
+ME.EMO,ME.SUB_EMO3,0.75,+,hierarchical,none,Batch G
+ME.EMO,ME.SUB_EMO4,0.80,+,hierarchical,none,Batch G
+ME.EMO,ME.SUB_EMO5,0.75,+,hierarchical,none,Batch G
+ME.EMO,ME.SUB_EMO6,0.75,+,hierarchical,none,Batch G
+ME.NEEDS_IF,ME.APPR,0.80,+,cascade,none,Batch G
+ME.SYS_IF,ME.APPR,0.75,+,transactional,situational,Batch G
+ME.PERS_IF,ME.APPR,0.55,+,cascade,none,Batch G
+ME.PERS_IF,ME.EMO,0.50,+,cascade,none,Batch G
+ME.TEMP_IF,ME.BAS,0.60,+,cascade,none,Batch G
+ME.TEMP_IF,ME.AVD,0.60,+,cascade,none,Batch G
+ME.TEMP_IF,ME.SUB_EMO1,0.55,+,cascade,none,Batch G
+ME.APPR,ME.MOT,0.80,+,cascade,none,Batch G
+ME.APPR,ME.EMO,0.85,+,cascade,none,Batch G
+ME.MOT,ME.EMO,0.55,+,transactional,none,Batch G
+ME.EMO,ME.MOT,0.60,+,transactional,none,Batch G
+ME.APPR,ME.BAS,0.75,+,cascade,situational,Batch G
+ME.APPR,ME.AVD,0.75,+,cascade,situational,Batch G
+ME.BAS,ME.SUB_MOT1,0.70,+,cascade,none,Batch G
+ME.AVD,ME.SUB_MOT1,0.65,-,cascade,none,Batch G
+ME.BAS,ME.SUB_EMO1,0.65,+,cascade,none,Batch G
+ME.AVD,ME.SUB_EMO1,0.65,-,cascade,none,Batch G
+ME.MECH_ATTR,ME.SUB_APP2,0.65,+,cascade,developmental,Batch G
+ME.MECH_ATTR,ME.SUB_EMO2,0.70,+,cascade,none,Batch G
+ME.MECH_ATTR,ME.SUB_MOT3,0.60,+,cascade,none,Batch G
+ME.MECH_SAL,ME.BAS,0.70,+,cascade,situational,Batch G
+ME.MECH_SAL,ME.SUB_MOT2,0.60,+,cascade,none,Batch G
+ME.MECH_SAL,ME.MECH_SAL,0.45,+,cascade,none,Batch G
+ME.SUB_EMO6,ME.MECH_SAL,0.35,+,cascade,none,Batch G
+ME.MECH_LEARN,ME.APPR,0.65,+,cascade,developmental,Batch G
+ME.MECH_LEARN,ME.MECH_SAL,0.50,+,cascade,none,Batch G
+ME.OUT_ACT,ME.MECH_LEARN,0.60,+,cascade,none,Batch G
+ME.MECH_REG,ME.APPR,0.60,-,cascade,developmental,Batch G
+ME.MECH_REG,ME.EMO,0.55,-,cascade,developmental,Batch G
+ME.MECH_REG,ME.SUB_MOT3,0.45,+,cascade,none,Batch G
+ME.MOT,ME.OUT_ACT,0.80,+,cascade,none,Batch G
+ME.SUB_EMO4,ME.OUT_ACT,0.65,+,cascade,none,Batch G
+ME.SUB_EMO3,ME.SYS_IF,0.55,+,transactional,none,Batch G
+ME.SUB_EMO1,ME.SUB_EMO2,0.60,+,cascade,none,Batch G
+ME.SUB_EMO1,ME.SUB_APP1,0.40,+,cascade,none,Batch G
+ME.SUB_EMO1,ME.SUB_EMO1,0.40,+,cascade,none,Batch G
+ME.MOT,ME.MOT,0.35,+,cascade,none,Batch G
+ME.AVD,ME.DIS_IF,0.60,+,cascade,situational,Batch G
+ME.MECH_SAL,ME.DIS_IF,0.60,+,cascade,situational,Batch G
+ME.SUB_EMO6,ME.DIS_IF,0.55,-,cascade,none,Batch G
+ME.MECH_ATTR,ME.DIS_IF,0.55,+,cascade,none,Batch G
+ME.MECH_REG,ME.DIS_IF,0.60,-,cascade,none,Batch G
+ME.EMO,ME.DIS_IF,0.45,+,cascade,none,Batch G
+ME.THER_IF,ME.MECH_REG,0.65,+,transactional,none,Batch G
+SYS.SYS,SYS.MICRO,0.90,+,hierarchical,none,Batch H
+SYS.SYS,SYS.MESO,0.85,+,hierarchical,none,Batch H
+SYS.SYS,SYS.EXO,0.85,+,hierarchical,none,Batch H
+SYS.SYS,SYS.MACRO,0.90,+,hierarchical,none,Batch H
+SYS.SYS,SYS.CHRONO,0.80,+,hierarchical,none,Batch H
+SYS.SYS,SYS.BOUNDARY,0.90,+,hierarchical,none,Batch H
+SYS.MICRO,SYS.FAM,0.90,+,hierarchical,none,Batch H
+SYS.MICRO,SYS.SCHWORK,0.80,+,hierarchical,none,Batch H
+SYS.MICRO,SYS.PEER,0.75,+,hierarchical,none,Batch H
+SYS.MESO,SYS.LINK_XS,0.85,+,hierarchical,none,Batch H
+SYS.EXO,SYS.ECON_LOCAL,0.80,+,hierarchical,none,Batch H
+SYS.EXO,SYS.SERV,0.80,+,hierarchical,none,Batch H
+SYS.EXO,SYS.MEDIA,0.70,+,hierarchical,none,Batch H
+SYS.EXO,SYS.GOV_LOCAL,0.75,+,hierarchical,none,Batch H
+SYS.MACRO,SYS.STATE,0.85,+,hierarchical,none,Batch H
+SYS.MACRO,SYS.MAC_ECON,0.85,+,hierarchical,none,Batch H
+SYS.MACRO,SYS.INEQ,0.85,+,hierarchical,none,Batch H
+SYS.MACRO,SYS.CULT,0.80,+,hierarchical,none,Batch H
+SYS.MACRO,SYS.EXO,0.70,+,nested,none,Batch H
+SYS.EXO,SYS.MESO,0.60,+,nested,none,Batch H
+SYS.MESO,SYS.MICRO,0.65,+,nested,none,Batch H
+SYS.MICRO,SYS.PROX_PROC,0.85,+,mechanism,none,Batch H
+SYS.PROX_PROC,SYS.PERSON_IF,0.85,+,mechanism,dev_window,Batch H
+SYS.MICRO,SYS.BOUNDARY,0.75,+,transactional,none,Batch H
+SYS.BOUNDARY,SYS.COUPLING,0.80,+,mechanism,none,Batch H
+SYS.COUPLING,SYS.PERSON_IF,0.80,+,mechanism,none,Batch H
+SYS.COUPLING,SYS.COUPLING,0.60,+,self-loop,none,Batch H
+SYS.ECON_LOCAL,SYS.FAM,0.65,-,second-order,situational,Batch H
+SYS.FAM,SYS.FEEDBACK,0.80,+,mechanism,none,Batch H
+SYS.FEEDBACK,SYS.FAM,0.75,+,mechanism,none,Batch H
+SYS.FEEDBACK,SYS.FEEDBACK,0.60,+,self-loop,none,Batch H
+SYS.FAM,SYS.PERSON_IF,0.70,+,transactional,none,Batch H
+SYS.FAM,SYS.DIS_IF,0.60,-,disorder_prior,none,Batch H
+SYS.PEER,SYS.PERSON_IF,0.55,+,transactional,situational,Batch H
+SYS.SCHWORK,SYS.PERSON_IF,0.55,+,transactional,none,Batch H
+SYS.STATE,SYS.INEQ,0.60,-,policy,historical,Batch H
+SYS.STATE,SYS.SERV,0.70,+,policy,historical,Batch H
+SYS.STATE,SYS.BOUNDARY,0.45,-,policy,situational,Batch H
+SYS.MAC_ECON,SYS.SOC_DETERM,0.75,+,transactional,none,Batch H
+SYS.INEQ,SYS.SOC_DETERM,0.75,+,transactional,none,Batch H
+SYS.SOC_DETERM,SYS.PERSON_IF,0.70,-,social_determinant,dev_window,Batch H
+SYS.SOC_DETERM,SYS.ME_IF,0.60,-,social_determinant,situational,Batch H
+SYS.SOC_DETERM,SYS.NEEDS_IF,0.65,-,social_determinant,none,Batch H
+SYS.SOC_DETERM,SYS.DIS_IF,0.60,-,disorder_prior,dev_window,Batch H
+SYS.INEQ,SYS.DIS_IF,0.50,-,disorder_prior,none,Batch H
+SYS.CULT,SYS.PERSON_IF,0.55,+,transactional,none,Batch H
+SYS.CULT,SYS.MICRO,0.55,+,nested,none,Batch H
+SYS.MEDIA,SYS.CULT,0.50,+,transactional,none,Batch H
+SYS.MACRO,SYS.MACRO,0.60,+,self-loop,historical,Batch H
+SYS.SERV,SYS.LEVERAGE,0.70,+,mechanism,none,Batch H
+SYS.SERV,SYS.PERSON_IF,0.55,+,transactional,none,Batch H
+SYS.LEVERAGE,SYS.MICRO,0.65,+,mechanism,situational,Batch H
+SYS.LEVERAGE,SYS.THER_IF,0.75,+,mechanism,none,Batch H
+SYS.FAM,SYS.THER_IF,0.65,+,transactional,none,Batch H
+SYS.MICRO,SYS.ME_IF,0.60,+,transactional,none,Batch H
+SYS.MICRO,SYS.NEEDS_IF,0.60,+,transactional,none,Batch H
+SYS.CHRONO,SYS.DEV_IF,0.70,+,transactional,historical,Batch H
+SYS.CHRONO,SYS.MACRO,0.50,+,nested,historical,Batch H
+SYS.PROX_PROC,SYS.DEV_IF,0.65,+,transactional,dev_window,Batch H
+SYS.PERSON_IF,SYS.BOUNDARY,0.55,+,transactional,none,Batch H
+THER.THER,THER.N01,0.85,+,hierarchical,none,Batch J (composition)
+THER.THER,THER.N02,0.85,+,hierarchical,none,Batch J (composition)
+THER.THER,THER.N03,0.85,+,hierarchical,none,Batch J (composition)
+THER.THER,THER.N04,0.85,+,hierarchical,none,Batch J (composition)
+THER.THER,THER.N05,0.85,+,hierarchical,none,Batch J (composition)
+THER.THER,THER.N06,0.85,+,hierarchical,none,Batch J (composition)
+THER.THER,THER.N07,0.85,+,hierarchical,none,Batch J (composition)
+THER.THER,THER.N08,0.85,+,hierarchical,none,Batch J (composition)
+THER.THER,THER.N09,0.85,+,hierarchical,none,Batch J (composition)
+THER.THER,THER.N10,0.85,+,hierarchical,none,Batch J (composition)
+THER.THER,THER.N11,0.85,+,hierarchical,none,Batch J (composition)
+THER.N03,THER.S0301,0.80,+,hierarchical-implicit,none,Batch J (parent field)
+THER.N03,THER.S0302,0.80,+,hierarchical-implicit,none,Batch J (parent field)
+THER.N03,THER.S0303,0.80,+,hierarchical-implicit,none,Batch J (parent field)
+THER.N03,THER.S0304,0.80,+,hierarchical-implicit,none,Batch J (parent field)
+THER.N03,THER.S0305,0.80,+,hierarchical-implicit,none,Batch J (parent field)
+THER.N03,THER.S0306,0.80,+,hierarchical-implicit,none,Batch J (parent field)
+THER.N05,THER.S0501,0.80,+,hierarchical-implicit,none,Batch J (parent field)
+THER.N05,THER.S0502,0.80,+,hierarchical-implicit,none,Batch J (parent field)
+THER.N05,THER.S0503,0.80,+,hierarchical-implicit,none,Batch J (parent field)
+THER.N05,THER.S0504,0.80,+,hierarchical-implicit,none,Batch J (parent field)
+THER.N05,THER.S0505,0.80,+,hierarchical-implicit,none,Batch J (parent field)
+THER.N05,THER.S0506,0.80,+,hierarchical-implicit,none,Batch J (parent field)
+THER.N05,THER.S0507,0.80,+,hierarchical-implicit,none,Batch J (parent field)
+THER.N05,THER.S0508,0.80,+,hierarchical-implicit,none,Batch J (parent field)
+THER.N07,THER.S0701,0.80,+,hierarchical-implicit,none,Batch J (parent field)
+THER.N07,THER.S0702,0.80,+,hierarchical-implicit,none,Batch J (parent field)
+THER.N07,THER.S0703,0.80,+,hierarchical-implicit,none,Batch J (parent field)
+THER.N07,THER.S0704,0.80,+,hierarchical-implicit,none,Batch J (parent field)
+THER.N07,THER.S0705,0.80,+,hierarchical-implicit,none,Batch J (parent field)
+THER.N07,THER.S0706,0.80,+,hierarchical-implicit,none,Batch J (parent field)
+THER.N07,THER.S0707,0.80,+,hierarchical-implicit,none,Batch J (parent field)
+THER.N09,THER.S0901,0.80,+,hierarchical-implicit,none,Batch J (parent field)
+THER.N09,THER.S0902,0.80,+,hierarchical-implicit,none,Batch J (parent field)
+THER.N09,THER.S0903,0.80,+,hierarchical-implicit,none,Batch J (parent field)
+THER.N09,THER.S0904,0.80,+,hierarchical-implicit,none,Batch J (parent field)
+THER.N09,THER.S0905,0.80,+,hierarchical-implicit,none,Batch J (parent field)
+THER.N09,THER.S0906,0.80,+,hierarchical-implicit,none,Batch J (parent field)
+DEV.D,DEV.CTX_CARE,0.80,+,hierarchical-implicit,none,Batch J (parent field)
+DEV.D,DEV.MECH_MAT,0.80,+,hierarchical-implicit,none,Batch J (parent field)
+DEV.D,DEV.MECH_LRN,0.80,+,hierarchical-implicit,none,Batch J (parent field)
+DEV.D,DEV.MECH_CON,0.80,+,hierarchical-implicit,none,Batch J (parent field)
+DEV.D,DEV.MECH_INT,0.80,+,hierarchical-implicit,none,Batch J (parent field)
+DEV.D,DEV.MECH_TRX,0.80,+,hierarchical-implicit,none,Batch J (parent field)
+DEV.DOM_COG,DEV.SUB_COG1,0.80,+,hierarchical-implicit,none,Batch J (parent field)
+DEV.DOM_COG,DEV.SUB_COG2,0.80,+,hierarchical-implicit,none,Batch J (parent field)
+DEV.DOM_COG,DEV.SUB_COG3,0.80,+,hierarchical-implicit,none,Batch J (parent field)
+DEV.DOM_COG,DEV.SUB_COG4,0.80,+,hierarchical-implicit,none,Batch J (parent field)
+DEV.DOM_SOC,DEV.SUB_SOC1,0.80,+,hierarchical-implicit,none,Batch J (parent field)
+DEV.DOM_SOC,DEV.SUB_SOC2,0.80,+,hierarchical-implicit,none,Batch J (parent field)
+DEV.DOM_SOC,DEV.SUB_SOC3,0.80,+,hierarchical-implicit,none,Batch J (parent field)
+PER.P,PER.ST_STATE,0.80,+,hierarchical-implicit,none,Batch J (parent field)
+PER.P,PER.CTX_SIT,0.80,+,hierarchical-implicit,none,Batch J (parent field)
+PER.P,PER.OUT_LIFE,0.80,+,hierarchical-implicit,none,Batch J (parent field)
+PER.P,PER.TEMP_IN,0.80,+,hierarchical-implicit,none,Batch J (parent field)
+PER.P,PER.MECH_SEL,0.80,+,hierarchical-implicit,none,Batch J (parent field)
+PER.P,PER.MECH_EVO,0.80,+,hierarchical-implicit,none,Batch J (parent field)
+PER.P,PER.MECH_REA,0.80,+,hierarchical-implicit,none,Batch J (parent field)
+PER.P,PER.MECH_INS,0.80,+,hierarchical-implicit,none,Batch J (parent field)
+PER.P,PER.MECH_CYB,0.80,+,hierarchical-implicit,none,Batch J (parent field)
+PER.LAYER_ADP,PER.SUB_ADP1,0.80,+,hierarchical-implicit,none,Batch J (parent field)
+PER.LAYER_ADP,PER.SUB_ADP2,0.80,+,hierarchical-implicit,none,Batch J (parent field)
+PER.LAYER_ADP,PER.SUB_ADP3,0.80,+,hierarchical-implicit,none,Batch J (parent field)
+PER.LAYER_ADP,PER.SUB_ADP4,0.80,+,hierarchical-implicit,none,Batch J (parent field)
+PER.LAYER_NAR,PER.SUB_NAR1,0.80,+,hierarchical-implicit,none,Batch J (parent field)
+PER.LAYER_NAR,PER.SUB_NAR2,0.80,+,hierarchical-implicit,none,Batch J (parent field)
+TEM.T,TEM.BIO_GEN,0.80,+,hierarchical-implicit,none,Batch J (parent field)
+TEM.T,TEM.FIT,0.80,+,hierarchical-implicit,none,Batch J (parent field)
+TEM.T,TEM.CTX_CARE,0.80,+,hierarchical-implicit,none,Batch J (parent field)
+TEM.T,TEM.OUT_ADJ,0.80,+,hierarchical-implicit,none,Batch J (parent field)
+TEM.T,TEM.PERS_IF,0.80,+,hierarchical-implicit,none,Batch J (parent field)
+TEM.T,TEM.MECH_TXT,0.80,+,hierarchical-implicit,none,Batch J (parent field)
+TEM.T,TEM.MECH_TXE,0.80,+,hierarchical-implicit,none,Batch J (parent field)
+TEM.T,TEM.MECH_MAT,0.80,+,hierarchical-implicit,none,Batch J (parent field)
+NEED.N,NEED.SAT,0.80,+,hierarchical-implicit,none,Batch J (parent field)
+NEED.N,NEED.FRU,0.80,+,hierarchical-implicit,none,Batch J (parent field)
+NEED.N,NEED.CTX_ENV,0.80,+,hierarchical-implicit,none,Batch J (parent field)
+NEED.N,NEED.OUT_WB,0.80,+,hierarchical-implicit,none,Batch J (parent field)
+NEED.N,NEED.OUT_IB,0.80,+,hierarchical-implicit,none,Batch J (parent field)
+NEED.N,NEED.MOT_IF,0.80,+,hierarchical-implicit,none,Batch J (parent field)
+NEED.N,NEED.PERS_IF,0.80,+,hierarchical-implicit,none,Batch J (parent field)
+NEED.N,NEED.MECH_PRI,0.80,+,hierarchical-implicit,none,Batch J (parent field)
+NEED.N,NEED.MECH_STR,0.80,+,hierarchical-implicit,none,Batch J (parent field)
+NEED.N,NEED.MECH_SUB,0.80,+,hierarchical-implicit,none,Batch J (parent field)
+ME.ME,ME.OUT_ACT,0.80,+,hierarchical-implicit,none,Batch J (parent field)
+ME.ME,ME.NEEDS_IF,0.80,+,hierarchical-implicit,none,Batch J (parent field)
+ME.ME,ME.SYS_IF,0.80,+,hierarchical-implicit,none,Batch J (parent field)
+ME.ME,ME.PERS_IF,0.80,+,hierarchical-implicit,none,Batch J (parent field)
+ME.ME,ME.TEMP_IF,0.80,+,hierarchical-implicit,none,Batch J (parent field)
+ME.ME,ME.DIS_IF,0.80,+,hierarchical-implicit,none,Batch J (parent field)
+ME.ME,ME.THER_IF,0.80,+,hierarchical-implicit,none,Batch J (parent field)
+ME.ME,ME.MECH_ATTR,0.80,+,hierarchical-implicit,none,Batch J (parent field)
+ME.ME,ME.MECH_SAL,0.80,+,hierarchical-implicit,none,Batch J (parent field)
+ME.ME,ME.MECH_REG,0.80,+,hierarchical-implicit,none,Batch J (parent field)
+ME.ME,ME.MECH_LEARN,0.80,+,hierarchical-implicit,none,Batch J (parent field)
+SYS.SYS,SYS.FEEDBACK,0.80,+,hierarchical-implicit,none,Batch J (parent field)
+SYS.SYS,SYS.COUPLING,0.80,+,hierarchical-implicit,none,Batch J (parent field)
+SYS.SYS,SYS.PROX_PROC,0.80,+,hierarchical-implicit,none,Batch J (parent field)
+SYS.SYS,SYS.SOC_DETERM,0.80,+,hierarchical-implicit,none,Batch J (parent field)
+SYS.SYS,SYS.LEVERAGE,0.80,+,hierarchical-implicit,none,Batch J (parent field)
+SYS.SYS,SYS.PERSON_IF,0.80,+,hierarchical-implicit,none,Batch J (parent field)
+SYS.SYS,SYS.NEEDS_IF,0.80,+,hierarchical-implicit,none,Batch J (parent field)
+SYS.SYS,SYS.ME_IF,0.80,+,hierarchical-implicit,none,Batch J (parent field)
+SYS.SYS,SYS.DEV_IF,0.80,+,hierarchical-implicit,none,Batch J (parent field)
+SYS.SYS,SYS.DIS_IF,0.80,+,hierarchical-implicit,none,Batch J (parent field)
+SYS.SYS,SYS.THER_IF,0.80,+,hierarchical-implicit,none,Batch J (parent field)
+TEM.PERS_IF,PER.P,0.9,+,binding,none,Batch J (composition)
+TEM.OUT_ADJ,DIS.P,0.9,+,binding,none,Batch J (composition)
+NEED.MOT_IF,ME.ME,0.9,+,binding,none,Batch J (composition)
+PER.P,NEED.PERS_IF,0.9,+,binding,none,Batch J (composition)
+NEED.N,ME.NEEDS_IF,0.9,+,binding,none,Batch J (composition)
+ME.SYS_IF,SYS.SYS,0.9,+,binding,none,Batch J (composition)
+SYS.SYS,ME.SYS_IF,0.9,+,binding,none,Batch J (composition)
+PER.P,ME.PERS_IF,0.9,+,binding,none,Batch J (composition)
+TEM.T,ME.TEMP_IF,0.9,+,binding,none,Batch J (composition)
+ME.DIS_IF,DIS.P,0.9,+,binding,none,Batch J (composition)
+THER.THER,ME.THER_IF,0.9,+,binding,none,Batch J (composition)
+SYS.PERSON_IF,PER.P,0.9,+,binding,none,Batch J (composition)
+SYS.NEEDS_IF,NEED.N,0.9,+,binding,none,Batch J (composition)
+SYS.ME_IF,ME.ME,0.9,+,binding,none,Batch J (composition)
+SYS.DEV_IF,DEV.D,0.9,+,binding,none,Batch J (composition)
+SYS.DIS_IF,DIS.P,0.9,+,binding,none,Batch J (composition)
+THER.THER,SYS.THER_IF,0.9,+,binding,none,Batch J (composition)
+TEM.T,DEV.D,0.45,+,interstratum-transactional,infancy-peak,Batch J (dimension edge)
+DEV.D,TEM.T,0.45,+,interstratum-parametric,maturation-gated,Batch J (dimension edge)
+DEV.D,PER.P,0.70,+,interstratum-parametric,childhood-to-adulthood,Batch J (dimension edge)
+DEV.D,NEED.N,0.50,+,interstratum-parametric,life-stage-windows,Batch J (dimension edge)
+DEV.D,ME.ME,0.50,+,interstratum-parametric,childhood,Batch J (dimension edge)
+DEV.D,DIS.P,0.55,+,interstratum-disorder_prior,dev_window,Batch J (dimension edge)
+NEED.N,DIS.P,0.55,+,interstratum-disorder_prior,none,Batch J (dimension edge)
+ME.ME,NEED.N,0.50,+,interstratum-feedback,none,Batch J (dimension edge)
+PER.P,DIS.P,0.60,+,interstratum-disorder_prior,none,Batch J (dimension edge)
+PER.P,SYS.SYS,0.60,+,interstratum-transactional,none,Batch J (dimension edge)
+SYS.SYS,PER.P,0.50,+,interstratum-transactional,age-increasing,Batch J (dimension edge)
+DIS.P,THER.THER,0.70,+,interstratum-transactional,situational,Batch J (dimension edge)
+DIS.P,NEED.N,0.45,-,interstratum-feedback,none,Batch J (dimension edge)
+DIS.P,SYS.SYS,0.45,-,interstratum-feedback,none,Batch J (dimension edge)
+THER.THER,DIS.P,0.65,-,interstratum-treatment,none,Batch J (dimension edge)
+THER.THER,TEM.T,0.45,+,interstratum-treatment,none,Batch J (dimension edge)
+THER.THER,PER.P,0.40,+,interstratum-treatment,none,Batch J (dimension edge)
+THER.THER,NEED.N,0.45,+,interstratum-treatment,none,Batch J (dimension edge)

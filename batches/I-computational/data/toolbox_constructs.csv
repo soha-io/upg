@@ -1,0 +1,17 @@
+construct_id,formal_object,notation,mathematical_home,models_which_need,primary_source,provenance
+T01,state vector,x(t) ∈ R^n,linear algebra,a person's momentary condition across n nodes,"Batchelder 2010; base framework",library
+T02,signed weighted adjacency matrix,W ∈ R^{n×n},"graph theory / linear algebra",signed reinforcing/weakening influence among nodes (Axiom 5),"base framework; Borsboom 2017*",library+self
+T03,degree matrix,D = diag(sum_j W_ij),graph theory,total coupling of each node,base framework,library
+T04,graph Laplacian,L = D − W,spectral graph theory,latent axes / communities / bridges,"Fiedler 1973*; base framework",library+self
+T05,normalized Laplacian,L_sym = I − D^{-1/2} W D^{-1/2},spectral graph theory,degree-robust embedding,"von Luxburg 2007*; Shi & Malik 2000*",self
+T06,eigenvalue / eigenvector,L v_k = λ_k v_k,linear algebra,principal modes; Fiedler vector v2,"Fiedler 1973*; Belkin & Niyogi 2003*",self
+T07,iterated map / temporal operator,x(t+1) = σ(Bx(t)+Cc(t)+Gu(t)+ε),dynamical systems,movement, loops, forecasting,"base framework; Schiepek 2016",library
+T08,fixed point / attractor,x* = σ(Bx*+…),dynamical systems,self-maintaining disorder states,"Liebovitch 2011; Hopfield 1982*",library+self
+T09,Jacobian / spectral radius,ρ(J) < 1,dynamical systems,local stability of an attractor,"Érdi et al. 2017; base framework",library
+T10,bifurcation / control parameter,x*(g) branch change at g_c,nonlinear dynamics,phase transitions, sudden gains/losses,"Schiepek 2016; Érdi et al. 2017",library
+T11,Bayesian belief update,posterior ∝ likelihood × prior,probability theory,belief change in CBT/behavioural experiments,Moutoussis et al. 2017,library
+T12,temporal-difference update,V(s)←V(s)+α(r+γV(s')−V(s)),reinforcement learning,avoidance/exposure, extinction,"Moutoussis et al. 2017; Sutton & Barto 1998*",library+self
+T13,control input,u(t) = u_self + u_ext,control theory,intervention & endogenous agency,"base framework; Liu et al. 2011*",library+self
+T14,cost functional / MPC,min_u Σ (x−x_goal)'Q(x−x_goal)+u'Ru,optimal control,intervention selection as optimization,"base framework; Gu et al. 2015*",library+self
+T15,measurement scale / meaningfulness,invariance under admissible transforms,measurement theory,valid quantification of constructs,"Townsend 2008; Batchelder 2010",library
+T16,model selection,penalize free parameters & functional form,statistics,guard against overfitting,Batchelder 2010,library

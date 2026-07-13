@@ -1,0 +1,254 @@
+node_id,stratum,label,level,parent,role
+DIS.P,DIS,General psychopathology (p),0,,mother
+DIS.SS_EMO,DIS,Emotional dysfunction superspectrum,1,DIS.P,internal
+DIS.SS_PSY,DIS,Psychosis superspectrum,1,DIS.P,internal
+DIS.SS_EXT,DIS,Externalizing superspectrum,1,DIS.P,internal
+DIS.SP_INT,DIS,Internalizing,2,DIS.SS_EMO,internal
+DIS.SP_SOM,DIS,Somatoform,2,DIS.SS_EMO,internal
+DIS.SP_THO,DIS,Thought disorder,2,DIS.SS_PSY,internal
+DIS.SP_DET,DIS,Detachment,2,DIS.SS_PSY,internal
+DIS.SP_DIS,DIS,Disinhibited externalizing,2,DIS.SS_EXT,internal
+DIS.SP_ANT,DIS,Antagonistic externalizing,2,DIS.SS_EXT,internal
+DIS.SP_NDV,DIS,Neurodevelopmental (provisional),2,DIS.P,internal
+DIS.SF_DIST,DIS,Distress subfactor,3,DIS.SP_INT,internal
+DIS.SF_FEAR,DIS,Fear subfactor,3,DIS.SP_INT,internal
+DIS.SF_EAT,DIS,Eating pathology subfactor,3,DIS.SP_INT,internal
+DIS.SF_SEX,DIS,Sexual problems subfactor,3,DIS.SP_INT,internal
+DIS.SF_MAN,DIS,Mania subfactor,3,DIS.SP_THO,internal
+DIS.SF_SUB,DIS,Substance abuse subfactor,3,DIS.SP_DIS,internal
+DIS.SF_ASB,DIS,Antisocial behavior subfactor,3,DIS.SP_DIS,internal
+THER.N01,THER,Entry / Triage,0,,internal
+THER.N02,THER,Safety + Ethical Frame,0,,internal
+THER.N03,THER,Engagement / Alliance,0,,internal
+THER.N04,THER,Assessment,0,,internal
+THER.N05,THER,Case Formulation,0,,internal
+THER.N06,THER,Goal Agreement,0,,internal
+THER.N07,THER,Change Work / Intervention,0,,internal
+THER.N08,THER,Practice + Generalization,0,,internal
+THER.N09,THER,Outcome Monitoring,0,,internal
+THER.N10,THER,Review + Adaptation,0,,internal
+THER.N11,THER,Consolidation / Termination / Maintenance,0,,internal
+THER.S0301,THER,Bond,1,THER.N03,internal
+THER.S0302,THER,Task Agreement,1,THER.N03,internal
+THER.S0303,THER,Goal Agreement (alliance facet),1,THER.N03,internal
+THER.S0304,THER,Empathy / Validation,1,THER.N03,internal
+THER.S0305,THER,Collaboration,1,THER.N03,internal
+THER.S0306,THER,Rupture Detection + Repair,1,THER.N03,internal
+THER.S0501,THER,Presenting Problem,1,THER.N05,internal
+THER.S0502,THER,Triggers,1,THER.N05,internal
+THER.S0503,THER,Emotion / Body State,1,THER.N05,internal
+THER.S0504,THER,Meaning / Belief / Schema,1,THER.N05,internal
+THER.S0505,THER,Action / Avoidance / Coping,1,THER.N05,internal
+THER.S0506,THER,Consequences,1,THER.N05,internal
+THER.S0507,THER,Relationships + Context,1,THER.N05,internal
+THER.S0508,THER,Protective Factors,1,THER.N05,internal
+THER.S0701,THER,Cognitive Change,1,THER.N07,internal
+THER.S0702,THER,Behavioral Change,1,THER.N07,internal
+THER.S0703,THER,Emotional Processing,1,THER.N07,internal
+THER.S0704,THER,Relational Change,1,THER.N07,internal
+THER.S0705,THER,Skills + Regulation,1,THER.N07,internal
+THER.S0706,THER,Meaning + Identity,1,THER.N07,internal
+THER.S0707,THER,Context Change,1,THER.N07,internal
+THER.S0901,THER,Symptom Tracking,1,THER.N09,internal
+THER.S0902,THER,Functioning Tracking,1,THER.N09,internal
+THER.S0903,THER,Alliance Monitoring,1,THER.N09,internal
+THER.S0904,THER,Risk Change,1,THER.N09,internal
+THER.S0905,THER,Adverse-Effect Detection,1,THER.N09,internal
+THER.S0906,THER,Not-on-Track Detection,1,THER.N09,internal
+DEV.D,DEV,Developmental trajectory (global),0,,mother
+DEV.DOM_PHY,DEV,Physical / Motor,1,DEV.D,internal
+DEV.DOM_COG,DEV,Cognitive,1,DEV.D,internal
+DEV.DOM_LAN,DEV,Language,1,DEV.D,internal
+DEV.DOM_EMO,DEV,Emotional,1,DEV.D,internal
+DEV.DOM_SOC,DEV,Social / Relational,1,DEV.D,internal
+DEV.DOM_MOR,DEV,Moral,1,DEV.D,internal
+DEV.DOM_SLF,DEV,Self / Identity,1,DEV.D,internal
+DEV.CTX_CARE,DEV,Caregiving / Attachment context,1,DEV.D,internal
+DEV.MECH_MAT,DEV,Maturation,2,DEV.D,internal
+DEV.MECH_LRN,DEV,Learning,2,DEV.D,internal
+DEV.MECH_CON,DEV,Construction,2,DEV.D,internal
+DEV.MECH_INT,DEV,Internalization,2,DEV.D,internal
+DEV.MECH_TRX,DEV,Transaction,2,DEV.D,internal
+DEV.SUB_COG1,DEV,Sensorimotor structures,3,DEV.DOM_COG,internal
+DEV.SUB_COG2,DEV,Preoperational structures,3,DEV.DOM_COG,internal
+DEV.SUB_COG3,DEV,Concrete operational structures,3,DEV.DOM_COG,internal
+DEV.SUB_COG4,DEV,Formal operational structures,3,DEV.DOM_COG,internal
+DEV.SUB_SOC1,DEV,Attachment formation,3,DEV.DOM_SOC,internal
+DEV.SUB_SOC2,DEV,Internal working models,3,DEV.DOM_SOC,internal
+DEV.SUB_SOC3,DEV,Peer competence,3,DEV.DOM_SOC,internal
+PER.P,PER,Personality system (global),0,,mother
+PER.LAYER_TRT,PER,Dispositional traits,1,PER.P,internal
+PER.LAYER_ADP,PER,Characteristic adaptations,1,PER.P,internal
+PER.LAYER_NAR,PER,Narrative identity,1,PER.P,internal
+PER.ST_STATE,PER,Momentary states,1,PER.P,internal
+PER.CTX_SIT,PER,Situations / contexts,1,PER.P,internal
+PER.OUT_LIFE,PER,Consequential outcomes,1,PER.P,internal
+PER.TEMP_IN,PER,Temperament substrate,1,PER.P,internal
+PER.MECH_SEL,PER,Situation selection,2,PER.P,internal
+PER.MECH_EVO,PER,Evocation,2,PER.P,internal
+PER.MECH_REA,PER,Reactive processes,2,PER.P,internal
+PER.MECH_INS,PER,Instrumental mediation,2,PER.P,internal
+PER.MECH_CYB,PER,Cybernetic goal loop,2,PER.P,internal
+PER.TRT_N,PER,Neuroticism,2,PER.LAYER_TRT,internal
+PER.TRT_E,PER,Extraversion,2,PER.LAYER_TRT,internal
+PER.TRT_O,PER,Openness/Intellect,2,PER.LAYER_TRT,internal
+PER.TRT_A,PER,Agreeableness,2,PER.LAYER_TRT,internal
+PER.TRT_C,PER,Conscientiousness,2,PER.LAYER_TRT,internal
+PER.SUB_ADP1,PER,Goals and motives,2,PER.LAYER_ADP,internal
+PER.SUB_ADP2,PER,Values and beliefs,2,PER.LAYER_ADP,internal
+PER.SUB_ADP3,PER,Self-concept and schemas,2,PER.LAYER_ADP,internal
+PER.SUB_ADP4,PER,If-then behavioral signatures,2,PER.LAYER_ADP,internal
+PER.SUB_NAR1,PER,Life-story themes,2,PER.LAYER_NAR,internal
+PER.SUB_NAR2,PER,Redemption/contamination sequences,2,PER.LAYER_NAR,internal
+PER.N1,PER,Anxiety,3,PER.TRT_N,internal
+PER.N2,PER,Angry hostility,3,PER.TRT_N,internal
+PER.N3,PER,Depression,3,PER.TRT_N,internal
+PER.N4,PER,Self-consciousness,3,PER.TRT_N,internal
+PER.N5,PER,Impulsiveness,3,PER.TRT_N,internal
+PER.N6,PER,Vulnerability,3,PER.TRT_N,internal
+PER.E1,PER,Warmth,3,PER.TRT_E,internal
+PER.E2,PER,Gregariousness,3,PER.TRT_E,internal
+PER.E3,PER,Assertiveness,3,PER.TRT_E,internal
+PER.E4,PER,Activity,3,PER.TRT_E,internal
+PER.E5,PER,Excitement-seeking,3,PER.TRT_E,internal
+PER.E6,PER,Positive emotions,3,PER.TRT_E,internal
+PER.O1,PER,Fantasy,3,PER.TRT_O,internal
+PER.O2,PER,Aesthetics,3,PER.TRT_O,internal
+PER.O3,PER,Feelings,3,PER.TRT_O,internal
+PER.O4,PER,Actions,3,PER.TRT_O,internal
+PER.O5,PER,Ideas,3,PER.TRT_O,internal
+PER.O6,PER,Values,3,PER.TRT_O,internal
+PER.A1,PER,Trust,3,PER.TRT_A,internal
+PER.A2,PER,Straightforwardness,3,PER.TRT_A,internal
+PER.A3,PER,Altruism,3,PER.TRT_A,internal
+PER.A4,PER,Compliance,3,PER.TRT_A,internal
+PER.A5,PER,Modesty,3,PER.TRT_A,internal
+PER.A6,PER,Tender-mindedness,3,PER.TRT_A,internal
+PER.C1,PER,Competence,3,PER.TRT_C,internal
+PER.C2,PER,Order,3,PER.TRT_C,internal
+PER.C3,PER,Dutifulness,3,PER.TRT_C,internal
+PER.C4,PER,Achievement striving,3,PER.TRT_C,internal
+PER.C5,PER,Self-discipline,3,PER.TRT_C,internal
+PER.C6,PER,Deliberation,3,PER.TRT_C,internal
+TEM.T,TEM,Temperament system (global),0,,mother
+TEM.BIO_GEN,TEM,Genetic/physiological substrate,1,TEM.T,internal
+TEM.DIM_NA,TEM,Negative affectivity,1,TEM.T,internal
+TEM.DIM_SU,TEM,Surgency / positive affectivity,1,TEM.T,internal
+TEM.DIM_EC,TEM,Effortful control,1,TEM.T,internal
+TEM.TYPE,TEM,Configural types,1,TEM.T,internal
+TEM.FIT,TEM,Goodness of fit,1,TEM.T,internal
+TEM.CTX_CARE,TEM,Caregiving / environmental demands,1,TEM.T,internal
+TEM.OUT_ADJ,TEM,Maladjustment risk,1,TEM.T,interface
+TEM.PERS_IF,TEM,Personality trait layer,1,TEM.T,interface
+TEM.MECH_TXT,TEM,Temperament-by-temperament moderation,2,TEM.T,internal
+TEM.MECH_TXE,TEM,Temperament-by-environment moderation,2,TEM.T,internal
+TEM.MECH_MAT,TEM,Regulatory maturation,2,TEM.T,internal
+TEM.SUB_NA1,TEM,Fear,2,TEM.DIM_NA,internal
+TEM.SUB_NA2,TEM,Anger/frustration,2,TEM.DIM_NA,internal
+TEM.SUB_NA3,TEM,Sadness,2,TEM.DIM_NA,internal
+TEM.SUB_NA4,TEM,Discomfort,2,TEM.DIM_NA,internal
+TEM.SUB_NA5,TEM,Soothability (reversed),2,TEM.DIM_NA,internal
+TEM.SUB_SU1,TEM,Activity level,2,TEM.DIM_SU,internal
+TEM.SUB_SU2,TEM,Sociability,2,TEM.DIM_SU,internal
+TEM.SUB_SU3,TEM,Approach / anticipation,2,TEM.DIM_SU,internal
+TEM.SUB_SU4,TEM,High-intensity pleasure,2,TEM.DIM_SU,internal
+TEM.SUB_EC1,TEM,Attentional focusing,2,TEM.DIM_EC,internal
+TEM.SUB_EC2,TEM,Inhibitory control,2,TEM.DIM_EC,internal
+TEM.SUB_EC3,TEM,Perceptual sensitivity,2,TEM.DIM_EC,internal
+TEM.SUB_EC4,TEM,Low-intensity pleasure,2,TEM.DIM_EC,internal
+TEM.SUB_TY1,TEM,Easy type,2,TEM.TYPE,internal
+TEM.SUB_TY2,TEM,Difficult type,2,TEM.TYPE,internal
+TEM.SUB_TY3,TEM,Slow-to-warm-up type,2,TEM.TYPE,internal
+TEM.SUB_TY4,TEM,Inhibited / uninhibited,2,TEM.TYPE,internal
+NEED.N,NEED,Needs system (global),0,,mother
+NEED.NEED_PHY,NEED,Physiological / existence,1,NEED.N,internal
+NEED.NEED_SAF,NEED,Safety / self-protection,1,NEED.N,internal
+NEED.NEED_REL,NEED,Relatedness / belonging,1,NEED.N,internal
+NEED.NEED_EST,NEED,Esteem / status,1,NEED.N,internal
+NEED.NEED_COM,NEED,Competence / achievement,1,NEED.N,internal
+NEED.NEED_AUT,NEED,Autonomy / self-determination,1,NEED.N,internal
+NEED.NEED_MEA,NEED,Meaning / growth,1,NEED.N,internal
+NEED.SAT,NEED,Satisfaction channel,1,NEED.N,internal
+NEED.FRU,NEED,Frustration channel,1,NEED.N,internal
+NEED.CTX_ENV,NEED,Environmental supports/thwarts,1,NEED.N,internal
+NEED.OUT_WB,NEED,Wellbeing / flourishing,1,NEED.N,internal
+NEED.OUT_IB,NEED,Ill-being / defensiveness,1,NEED.N,internal
+NEED.MOT_IF,NEED,Motivation & goal layer,1,NEED.N,interface
+NEED.PERS_IF,NEED,Personality layer,1,NEED.N,interface
+NEED.MECH_PRI,NEED,Dynamic prioritization,2,NEED.N,internal
+NEED.MECH_STR,NEED,Individual need strength,2,NEED.N,internal
+NEED.MECH_SUB,NEED,Substitution / compensation,2,NEED.N,internal
+NEED.SUB_PHY1,NEED,Homeostatic regulation,2,NEED.NEED_PHY,internal
+NEED.SUB_PHY2,NEED,Rest / energy,2,NEED.NEED_PHY,internal
+NEED.SUB_SAF1,NEED,Physical safety,2,NEED.NEED_SAF,internal
+NEED.SUB_SAF2,NEED,Predictability / order,2,NEED.NEED_SAF,internal
+NEED.SUB_REL1,NEED,Attachment / intimacy,2,NEED.NEED_REL,internal
+NEED.SUB_REL2,NEED,Belonging / affiliation,2,NEED.NEED_REL,internal
+NEED.SUB_REL3,NEED,Mating / care line,2,NEED.NEED_REL,internal
+NEED.SUB_EST1,NEED,Status / prestige,2,NEED.NEED_EST,internal
+NEED.SUB_EST2,NEED,Self-esteem,2,NEED.NEED_EST,internal
+NEED.SUB_COM1,NEED,Mastery / effectance,2,NEED.NEED_COM,internal
+NEED.SUB_COM2,NEED,Achievement striving,2,NEED.NEED_COM,internal
+NEED.SUB_AUT1,NEED,Volition,2,NEED.NEED_AUT,internal
+NEED.SUB_AUT2,NEED,Self-congruence,2,NEED.NEED_AUT,internal
+NEED.SUB_MEA1,NEED,Purpose / coherence,2,NEED.NEED_MEA,internal
+NEED.SUB_MEA2,NEED,Growth / self-actualization,2,NEED.NEED_MEA,internal
+ME.ME,ME,Motivation-Emotion system (global),0,,mother
+ME.APPR,ME,Appraisal / valuation core,1,ME.ME,internal
+ME.MOT,ME,Motivation readout,1,ME.ME,internal
+ME.EMO,ME,Emotion readout,1,ME.ME,internal
+ME.BAS,ME,Approach / reward channel,1,ME.ME,internal
+ME.AVD,ME,Avoidance / punishment channel,1,ME.ME,internal
+ME.OUT_ACT,ME,Action / behavior output,1,ME.ME,internal
+ME.NEEDS_IF,ME,Needs input layer,1,ME.ME,interface
+ME.SYS_IF,ME,Situation / environment layer,1,ME.ME,interface
+ME.PERS_IF,ME,Personality layer,1,ME.ME,interface
+ME.TEMP_IF,ME,Temperament layer,1,ME.ME,interface
+ME.DIS_IF,ME,Psychopathology interface,1,ME.ME,interface
+ME.THER_IF,ME,Therapy / regulation interface,1,ME.ME,interface
+ME.MECH_ATTR,ME,Causal attribution,2,ME.ME,internal
+ME.MECH_SAL,ME,Incentive salience ('wanting'),2,ME.ME,internal
+ME.MECH_REG,ME,Emotion-motivation regulation,2,ME.ME,internal
+ME.MECH_LEARN,ME,Reinforcement learning / value updating,2,ME.ME,internal
+ME.SUB_APP1,ME,Primary appraisal (goal relevance/congruence),2,ME.APPR,internal
+ME.SUB_APP2,ME,Secondary appraisal (coping/control),2,ME.APPR,internal
+ME.SUB_MOT1,ME,Direction (goal selection),2,ME.MOT,internal
+ME.SUB_MOT2,ME,Intensity (vigor / energization),2,ME.MOT,internal
+ME.SUB_MOT3,ME,Persistence (volition),2,ME.MOT,internal
+ME.SUB_EMO1,ME,Core affect (valence x arousal),2,ME.EMO,internal
+ME.SUB_EMO2,ME,Discrete emotion (categorical),2,ME.EMO,internal
+ME.SUB_EMO3,ME,Expression / communication,2,ME.EMO,internal
+ME.SUB_EMO4,ME,Action tendency / readiness,2,ME.EMO,internal
+ME.SUB_EMO5,ME,Subjective feeling / experience,2,ME.EMO,internal
+ME.SUB_EMO6,ME,Hedonic impact ('liking'),2,ME.EMO,internal
+SYS.SYS,SYS,Systems / environment dimension (global),0,,mother
+SYS.MICRO,SYS,Microsystem,1,SYS.SYS,internal
+SYS.MESO,SYS,Mesosystem,1,SYS.SYS,internal
+SYS.EXO,SYS,Exosystem,1,SYS.SYS,internal
+SYS.MACRO,SYS,Macrosystem,1,SYS.SYS,internal
+SYS.CHRONO,SYS,Chronosystem,1,SYS.SYS,internal
+SYS.BOUNDARY,SYS,Person-environment boundary (autopoietic interface),1,SYS.SYS,internal
+SYS.FAM,SYS,Family / household,2,SYS.MICRO,internal
+SYS.SCHWORK,SYS,School / workplace,2,SYS.MICRO,internal
+SYS.PEER,SYS,Peer / community group,2,SYS.MICRO,internal
+SYS.LINK_XS,SYS,Cross-setting linkages,2,SYS.MESO,internal
+SYS.ECON_LOCAL,SYS,Caregiver economy / employment,2,SYS.EXO,internal
+SYS.SERV,SYS,Service & health systems,2,SYS.EXO,internal
+SYS.MEDIA,SYS,Media / information environment,2,SYS.EXO,internal
+SYS.GOV_LOCAL,SYS,Local institutions / governance,2,SYS.EXO,internal
+SYS.STATE,SYS,State / government / law & policy,2,SYS.MACRO,internal
+SYS.MAC_ECON,SYS,Economic system / material resources,2,SYS.MACRO,internal
+SYS.INEQ,SYS,Socioeconomic inequality,2,SYS.MACRO,internal
+SYS.CULT,SYS,Cultural norms / ideology,2,SYS.MACRO,internal
+SYS.FEEDBACK,SYS,Feedback / circular causality,3,SYS.SYS,internal
+SYS.COUPLING,SYS,Structural coupling,3,SYS.SYS,internal
+SYS.PROX_PROC,SYS,Proximal processes,3,SYS.SYS,internal
+SYS.SOC_DETERM,SYS,Social-determinant transduction,3,SYS.SYS,internal
+SYS.LEVERAGE,SYS,Leverage points / systemic intervention,3,SYS.SYS,internal
+SYS.PERSON_IF,SYS,Person-model interface,1,SYS.SYS,interface
+SYS.NEEDS_IF,SYS,Needs interface (Batch F),1,SYS.SYS,interface
+SYS.ME_IF,SYS,Motivation-emotion / situation interface (Batch G),1,SYS.SYS,interface
+SYS.DEV_IF,SYS,Development interface (Batch C),1,SYS.SYS,interface
+SYS.DIS_IF,SYS,Psychopathology interface (Batch A),1,SYS.SYS,interface
+SYS.THER_IF,SYS,Therapy interface (Batch B),1,SYS.SYS,interface
+THER.THER,THER,"Universal therapy workflow (mother node, synthesized at composition)",-1,,mother
