@@ -4,10 +4,10 @@ Batch A: Psychopathology paper
 Reproducible: python3 generate_figures.py  (requires networkx, matplotlib, pandas, numpy)
 
 Inputs : ../data/udg_nodes.csv, ../data/udg_edges.csv
-Outputs: ../figures/fig1_three_systems.png
-         ../figures/fig2_universal_disorder_graph.png
-         ../figures/fig3_internalizing_subgraph.png
-         ../figures/fig4_adjacency_heatmap.png
+Outputs: ../figures/figA1_three_systems.png
+         ../figures/figA2_universal_disorder_graph.png
+         ../figures/figA3_internalizing_subgraph.png
+         ../figures/figA4_adjacency_heatmap.png
 All weights are provisional consensus values synthesized from published
 factor-analytic estimates (see edges.csv 'primary_source' column); they are
 starting priors W(0) intended for empirical re-estimation, not fixed constants.
@@ -41,7 +41,7 @@ SHORT = {
 }
 
 # ---------------------------------------------------------------- Figure 1
-def fig1_three_systems():
+def figA1_three_systems():
     fig, axes = plt.subplots(1, 3, figsize=(13, 4.6))
     for ax in axes:
         ax.set_xlim(0, 10); ax.set_ylim(0, 10); ax.axis("off")
@@ -95,11 +95,11 @@ def fig1_three_systems():
             ha="center", fontsize=8, style="italic")
 
     plt.tight_layout()
-    plt.savefig(os.path.join(FIGS, "fig1_three_systems.png"), dpi=300, bbox_inches="tight")
+    plt.savefig(os.path.join(FIGS, "figA1_three_systems.png"), dpi=300, bbox_inches="tight")
     plt.close()
 
 # ---------------------------------------------------------------- Figure 2
-def fig2_udg():
+def figA2_udg():
     G = nx.DiGraph()
     for _, r in nodes.iterrows():
         G.add_node(r.node_id, level=r.level)
@@ -159,11 +159,11 @@ def fig2_udg():
                  "(edge thickness " + r"$\propto$" + " provisional consensus weight; all weights are priors for empirical re-estimation)",
                  fontsize=10)
     plt.tight_layout()
-    plt.savefig(os.path.join(FIGS, "fig2_universal_disorder_graph.png"), dpi=300, bbox_inches="tight")
+    plt.savefig(os.path.join(FIGS, "figA2_universal_disorder_graph.png"), dpi=300, bbox_inches="tight")
     plt.close()
 
 # ---------------------------------------------------------------- Figure 3
-def fig3_internalizing_subgraph():
+def figA3_internalizing_subgraph():
     syndromes = {
         "SF_DIST": ["MDD", "GAD", "Dysthymia", "PTSD"],
         "SF_FEAR": ["Panic", "Agoraphobia", "Social\nanxiety", "Specific\nphobia", "OCD"],
@@ -202,11 +202,11 @@ def fig3_internalizing_subgraph():
     ax.set_title("Internalizing spectrum subgraph (zoom-in): subfactors, representative syndromes, and bridge relations\n"
                  "Subgraphs communicate with other spectra only through their mother node", fontsize=10)
     plt.tight_layout()
-    plt.savefig(os.path.join(FIGS, "fig3_internalizing_subgraph.png"), dpi=300, bbox_inches="tight")
+    plt.savefig(os.path.join(FIGS, "figA3_internalizing_subgraph.png"), dpi=300, bbox_inches="tight")
     plt.close()
 
 # ---------------------------------------------------------------- Figure 4
-def fig4_heatmap():
+def figA4_heatmap():
     spectra = ["SP_INT", "SP_SOM", "SP_THO", "SP_DET", "SP_DIS", "SP_ANT", "SP_NDV"]
     labels = ["INT", "SOM", "THO", "DET", "DIS", "ANT", "NDV"]
     n = len(spectra)
@@ -225,12 +225,12 @@ def fig4_heatmap():
     ax.set_title("Provisional spectrum-level adjacency matrix W(0)\n(consensus priors for empirical re-estimation)", fontsize=10)
     fig.colorbar(im, shrink=0.8, label="edge weight")
     plt.tight_layout()
-    plt.savefig(os.path.join(FIGS, "fig4_adjacency_heatmap.png"), dpi=300, bbox_inches="tight")
+    plt.savefig(os.path.join(FIGS, "figA4_adjacency_heatmap.png"), dpi=300, bbox_inches="tight")
     plt.close()
 
 if __name__ == "__main__":
-    fig1_three_systems()
-    fig2_udg()
-    fig3_internalizing_subgraph()
-    fig4_heatmap()
+    figA1_three_systems()
+    figA2_udg()
+    figA3_internalizing_subgraph()
+    figA4_heatmap()
     print("All figures generated in", os.path.abspath(FIGS))
