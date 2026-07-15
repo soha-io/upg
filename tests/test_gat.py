@@ -1,4 +1,6 @@
 """Step 5: the structure-constrained graph-attention estimator."""
+from pathlib import Path
+
 import numpy as np
 import pytest
 
@@ -109,6 +111,87 @@ def test_save_load_roundtrip(tmp_path, tiny_sets):
     b = loaded.estimate(r.observations, r.u, r.params.kappa)
     assert np.allclose(a.B_hat, b.B_hat, atol=1e-12)
     assert np.allclose(a.B_sd, b.B_sd, atol=1e-12)
+
+
+def test_signed_intervals_and_custom_base_roundtrip(tmp_path):
+    """Signed supports keep non-negative scales and ordered intervals, and a
+    non-default scientific skeleton survives checkpoint persistence."""
+    B0 = np.array([
+        [0.40, -0.20, 0.00],
+        [0.00, 0.30, 0.15],
+        [-0.25, 0.00, 0.20],
+    ])
+    g0 = np.array([0.0, -0.45, 0.0])
+    base = (B0, g0, ["TEM", "DEV", "SYS"], 0.37)
+    model = MaskedGraphAttentionEstimator(GATConfig(seed=13), base=base)
+    rng = np.random.default_rng(14)
+    observations = rng.uniform(0.1, 0.9, size=(45, 3))
+    u = rng.uniform(0.0, 1.0, size=45)
+
+    before = model.estimate(observations, u, kappa=0.37)
+    support = B0 != 0.0
+    negative = B0 < 0.0
+    assert np.all(before.B_sd[support] >= 0.0)
+    assert np.all(before.B_lo[support] < before.B_hat[support])
+    assert np.all(before.B_hat[support] < before.B_hi[support])
+    assert np.all(before.B_hi[negative] < 0.0)
+
+    path = str(tmp_path / "signed_custom_gat.npz")
+    model.save(path)
+    loaded = MaskedGraphAttentionEstimator.load(path)
+    after = loaded.estimate(observations, u, kappa=0.37)
+    assert np.array_equal(loaded.B0, B0)
+    assert np.array_equal(loaded.g0, g0)
+    assert loaded.dims == base[2]
+    assert loaded.base_kappa == base[3]
+    assert np.allclose(after.B_hat, before.B_hat, atol=1e-12)
+    assert np.allclose(after.B_lo, before.B_lo, atol=1e-12)
+    assert np.allclose(after.B_hi, before.B_hi, atol=1e-12)
+
+
+def test_nonfinite_head_fails_before_exponential():
+    model = MaskedGraphAttentionEstimator(GATConfig(seed=0))
+    model.params["be2"].data[0] = np.inf
+    record = simulate_population(1, config=SimConfig(T=30, seed=2), pop_seed=2).records[0]
+    with pytest.raises(FloatingPointError, match="edge log-deviation head"):
+        model.estimate(record.observations, record.u, record.params.kappa)
+
+
+def test_finite_but_overflowing_ood_head_fails_after_exponential():
+    model = MaskedGraphAttentionEstimator(GATConfig(seed=0))
+    model.params["be2"].data[0] = 1e6
+    record = simulate_population(1, config=SimConfig(T=30, seed=3), pop_seed=3).records[0]
+    with pytest.raises(FloatingPointError, match="exponential output"):
+        model.estimate(record.observations, record.u, record.params.kappa)
+
+
+def test_checked_in_legacy_gat_checkpoints_load():
+    repo = Path(__file__).resolve().parents[1]
+    checkpoint_dir = repo / "batches" / "K-real-data-evidence" / "results" / "gat"
+    checkpoints = sorted(checkpoint_dir.glob("gat_*.npz"))
+    assert [path.name for path in checkpoints] == [
+        "gat_balanced_regimes.npz",
+        "gat_clinical_realistic.npz",
+        "gat_transition_rich.npz",
+    ]
+    record = simulate_population(1, config=SimConfig(T=30, seed=4), pop_seed=4).records[0]
+    for checkpoint in checkpoints:
+        model = MaskedGraphAttentionEstimator.load(str(checkpoint))
+        estimate = model.estimate(record.observations, record.u, record.params.kappa)
+        assert estimate.B_hat.shape == model.B0.shape
+        assert np.all(np.isfinite(estimate.B_hat))
+
+
+def test_checkpoint_loader_rejects_nonfinite_numeric_array(tmp_path):
+    valid = tmp_path / "valid.npz"
+    corrupt = tmp_path / "corrupt.npz"
+    MaskedGraphAttentionEstimator(GATConfig(seed=0)).save(str(valid))
+    with np.load(valid, allow_pickle=False) as archive:
+        arrays = {name: archive[name].copy() for name in archive.files}
+    arrays["base_kappa"] = np.asarray(np.inf)
+    np.savez_compressed(corrupt, **arrays)
+    with pytest.raises(ValueError, match="non-finite array base_kappa"):
+        MaskedGraphAttentionEstimator.load(str(corrupt))
 
 
 def test_dataset_runner_reports_contract_metrics(tiny_sets):

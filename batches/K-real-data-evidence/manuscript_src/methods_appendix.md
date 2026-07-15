@@ -27,12 +27,19 @@ Per-file page, word, hash, method, status, and error fields are in `pdf_text_aud
 
 ## S3. Formal reproduction
 
-The project test suite was executed with Python 3.12 and Pytest through the supplied package. All 95 tests passed. `scripts/reproduce.py` independently returned:
+The frozen release test suite was executed with Python 3.12 and reported
+95/95 passing. Pre-study hardening added signed-GAT, custom-checkpoint,
+calendar-boundary, exact-horizon, output-lineage, composer-parity, and
+fail-closed GAT regressions; the current locked suite reports 123/123 passing.
+`scripts/reproduce.py` independently returned:
 
 - 253 nodes and 522 edges;
 - eight strata with 35 cross-stratum edges;
 - 20 self-loops and 33 negative edges;
-- full weak connectivity and directed reachability, zero isolated nodes, and zero encapsulation violations;
+- full weak connectivity, zero isolated nodes, and zero encapsulation
+  violations; the aggregation/broadcast semantic reachability audit is 1.000,
+  while the unaugmented directed registry has reachability fill .338525 and
+  109 zero-outdegree nodes;
 - dimension-graph algebraic connectivity $\lambda_2=1.568$;
 - NEED $\rightarrow$ ME $\rightarrow$ NEED gain +.400;
 - DIS $\rightarrow$ THER $\rightarrow$ DIS gain -.455;
@@ -62,6 +69,13 @@ $$
 \sigma_{measurement}=s_{observed}\sqrt{\frac{1-\alpha}{\alpha}}.
 $$
 
+**Correction notice.** The expression above belongs to the frozen legacy run
+and is not the conventional observed-score standard error of measurement.
+The repaired code uses $s_{observed}\sqrt{1-\alpha}$ and labels it
+`classical_test_theory_sem`. The alpha and facet-structure results below do
+not depend on this correction; the legacy measurement-SD column must not be
+reported as observed-score SEM.
+
 | Domain | Complete n for alpha | alpha | measurement SD |
 |---|---:|---:|---:|
 | N | 558,777 | .898459 | .055291 |
@@ -80,6 +94,16 @@ This is cross-sectional measurement evidence. It does not estimate trait change,
 
 ## S5. Kossakowski ESM analysis
 
+> **Chronology quarantine (2026-07-15).** Sections S5.1–S5.3 below document
+> the frozen original run; their numerical conclusions are not current
+> evidence. The run grouped and sorted `dayno` (day of year) across 2012 and
+> 2013 and labelled 7/14/21-day anchor gaps alike as "next week." See
+> `../CHRONOLOGY_QUARANTINE.md`. The repaired script uses full calendar dates,
+> exact horizon labels, regression tests across December/January, and a new
+> `results/real_data_corrected/v3_calendar/` namespace with an immutable,
+> atomic output guard and completion manifest. It has deliberately not been rerun
+> during pre-study infrastructure hardening.
+
 ### S5.1 Cleaning and measurement map
 
 The public CSV contained 1,476 rows. Five explicit aborted questionnaires were removed. Two missing abort flags were retained but item-gated rather than assumed valid or aborted. All 1,471 retained rows passed the 12-of-20 item gate; mean item coverage was .999898.
@@ -92,7 +116,14 @@ Thirteen weekly SCL-90-R depression items were averaged when at least ten were p
 
 For each weekly anchor, current seven-calendar-day ME was computed when at least three observed days were present. Spearman correlation with concurrent depression used 27 anchors. A circular moving-block percentile interval (block length 4; 5,000 deterministic resamples; seed 20260712) preserves short local order but is not a population-generalization interval for this N=1 archive.
 
-For each anchor, AR(1) was the lag coefficient from OLS with intercept over the current 21-calendar-day daily-ME window when at least eight observed values were present. Rolling variance used the same window and threshold. Each was correlated with the following anchor's change in depression. The preregistration-relevant results were:
+For each anchor, the frozen legacy AR(1) used the lag coefficient from OLS
+with intercept over the current 21-calendar-day daily-ME window after a
+value-count gate. The corrected pipeline instead requires at least eight valid
+observed consecutive-calendar-day $t-1\rightarrow t$ pairs, reports that pair
+count for every anchor, excludes pairs touching a missing value, and never
+bridges a missing calendar day. Rolling variance retains its separate
+eight-observed-value threshold. Each was correlated with the following
+anchor's change in depression. The quarantined legacy results were:
 
 | Analysis | rho | n | circular-block 95% interval |
 |---|---:|---:|---:|
@@ -137,27 +168,53 @@ The transition model also beat the uploaded channel-independent null at horizon 
 
 ## S7. Reproduction commands
 
-Run from `/workspace/batch-k-run` after placing the extracted inputs in the paths used by the scripts:
+Run from the repository root. `uv` creates the locked environment on Linux,
+WSL2, or macOS. Put public retrospective files in a sibling `upg-data` clone,
+set `UPG_PUBLIC_DATA_ROOT`, or pass `--data-root` explicitly. Precedence is
+explicit CLI > `UPG_PUBLIC_DATA_ROOT` > sibling clone; invalid configured
+paths fail closed. `UPG_DATA_ROOT` is reserved for the external CAS:
 
 ```bash
-python3 work/analysis/audit_sources.py
-MPLCONFIGDIR=/tmp/matplotlib python3 work/analysis/run_real_data_analysis.py
+uv run --locked --extra dev --extra study upg-preflight
+uv run --locked --extra study python \
+  batches/K-real-data-evidence/scripts/run_real_data_analysis.py \
+  --data-root "$UPG_PUBLIC_DATA_ROOT" \
+  --out batches/K-real-data-evidence/results/real_data_corrected/v3_calendar
 
-cd work/project/upg
-UV_CACHE_DIR=/tmp/uv-cache MPLCONFIGDIR=/tmp/matplotlib uv run --with pytest pytest -q
-PYTHONPATH=src python3 scripts/reproduce.py
+# Historical four-archive text audit, when that extracted layout is present:
+uv run --locked --extra study python \
+  batches/K-real-data-evidence/scripts/audit_sources.py \
+  --root "$UPG_SOURCE_AUDIT_ROOT" \
+  --out batches/K-real-data-evidence/results/source_audit_current/v1
 
-PYTHONPATH=src python3 scripts/gat_study.py --stage train --force \
-  --out /workspace/batch-k-run/work/results/retrained/gat_v1
-PYTHONPATH=src python3 scripts/gat_study.py --stage eval \
-  --out /workspace/batch-k-run/work/results/retrained/gat_v1 \
-  --baselines /workspace/batch-k-run/work/data/baselines_v1
+# To reproduce the historical two-source OCR recovery, supply the OCR sidecars
+# as an explicit immutable input and require both recoveries:
+uv run --locked --extra study python \
+  batches/K-real-data-evidence/scripts/audit_sources.py \
+  --root "$UPG_SOURCE_AUDIT_ROOT" \
+  --ocr-root "$UPG_SOURCE_AUDIT_OCR_ROOT" --require-ocr \
+  --out batches/K-real-data-evidence/results/source_audit_current/v1_with_ocr
 
-PYTHONPATH=src python3 scripts/forecast_study.py --stage eval \
-  --out /workspace/batch-k-run/work/results/retrained/forecast_v1
+# Explicit future experiment directories on the large-volume machine:
+uv run --locked python scripts/gat_study.py --stage prep --out "$UPG_RUN_ROOT/gat_v1"
+uv run --locked python scripts/gat_study.py --stage train --force \
+  --out "$UPG_RUN_ROOT/gat_v1"
+uv run --locked python scripts/gat_study.py --stage eval \
+  --out "$UPG_RUN_ROOT/gat_v1" --baselines "$UPG_RUN_ROOT/baselines_v1"
+uv run --locked python scripts/forecast_study.py --stage eval \
+  --out "$UPG_RUN_ROOT/forecast_v1"
 ```
 
-The GAT command above trains all three presets sequentially if `--preset` is omitted. The temporal directory must contain the checkpoint files described by its provenance JSON. Raw archives are never overwritten.
+The GAT train command processes all three presets sequentially if `--preset`
+is omitted. Evaluation also requires the registered baseline artifacts. The
+temporal directory must contain its data splits and the checkpoints described
+by its provenance JSON. These experiment commands are not part of preflight;
+raw archives and frozen Batch K result directories are never overwritten.
+The source audit never reads OCR material from its output directory. Without an
+explicit `--ocr-root`, the two known image-only PDFs are honestly reported as
+`no_extractable_text`; `--require-ocr` makes missing or incomplete sidecars a
+fail-closed atomic-run error. Every supplied OCR byte is included in the run's
+input-lineage hash.
 
 ## S8. Files and audit trail
 

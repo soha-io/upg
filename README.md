@@ -2,6 +2,34 @@
 
 Article series deriving an eight-dimensional network model of psychological functioning ("Eight-Dimension" model). Each batch = one journal-style manuscript + reproducible graph data + figures.
 
+## Clean-clone verification
+
+On Linux, WSL2, or macOS with `uv` installed, one command creates the locked
+environment and verifies tests, formal reproduction, checkpoints, manifests,
+registry parity, chronology-quarantine integrity, and any available public
+data checksums:
+
+```bash
+uv run --locked --extra dev --extra study upg-preflight
+```
+
+Set `UPG_PUBLIC_DATA_ROOT` to a larger-volume `upg-data/redistributable`
+directory or pass `--data-root`. Explicit CLI configuration takes precedence
+over that variable and the sibling-clone fallback. Invalid explicit or
+environment paths fail closed. `UPG_DATA_ROOT` is reserved for the external
+content-addressed study store. Missing auto-discovered public data are reported
+as a skip unless `--require-data` is supplied; restricted/DUA data are never
+required.
+
+The current GAT and transformer are pure NumPy CPU implementations. An RTX GPU
+does not accelerate them automatically; GPU-backend parity is an explicit
+future work unit. See `docs/compute_backend.md`.
+
+**Batch K correction boundary:** all legacy Kossakowski chronology-dependent
+artifacts are frozen and quarantined because they sorted day-of-year across
+2012/2013. They are not current evidence. See
+`batches/K-real-data-evidence/CHRONOLOGY_QUARANTINE.md`.
+
 ## Key decisions
 
 - **Format:** article series (one paper per batch), composed into the full model in Batches J–K.
@@ -25,6 +53,7 @@ Article series deriving an eight-dimensional network model of psychological func
 | H | Systems (ecological + state/economy) | USysG | Where You Live |
 | I | Computational & Mathematical Psychology (review + toolbox; no stratum) | — | The Formal Turn |
 | J | Eight-Dimension model (synthesis; composes A–H) | UPG / Great Graph | The Great Graph |
+| K | Applications and evidence boundary | UPG application contract | From Graph to Guidance |
 
 Established couplings: temperament → initial conditions of personality; development → sets all strata weights; traits → disorder-graph priors; fit node → therapy lever; needs → input layer of motivation (needs interface feeds the UMEG appraisal core, closing the F→G loop); need frustration → second person-specific disorder prior alongside temperament; motivation-emotion → third and most mechanistically detailed disorder prior (dysregulated wanting, deficient liking, fearful salience, maladaptive attribution, emotion dysregulation); environmental supports/thwarts → inward edge from systems (Batch H); UMEG situation interface = inward edge from systems (Batch H); UMEG regulation mechanism = therapy lever (Batch B).
 
@@ -38,10 +67,26 @@ Batch I specifics: **methodological keystone, derives no graph.** Critical revie
 
 Batch J specifics: **the synthesis — composes A–H into the Great Graph.** Base framework generalized into a stratified formalism (5 definitions: stratum, mother node + interfaces, encapsulation constraint, aggregation/broadcast between layers, composition; 4 propositions incl. axiom preservation and bifurcation inheritance κ\* = 1/λ_max(B)). Two data resolutions: `upg_dimension_*.csv` (8 mother nodes, 34 inter-dimension couplings + 7 self-loops, full provenance ledger — 29 collected from A–H, 5 new-at-composition flagged) and `upg_greatgraph_*.csv` (**253 nodes, 522 edges, 35 cross-stratum, 0 encapsulation violations**, built reproducibly by `scripts/compose_greatgraph.py`: namespacing, THER mother synthesized over the 11 UTG phases, implicit hierarchical edges materialized from parent fields, interface bindings, sign harmonization to algebraic convention — one conflict found in H's wellbeing-valence signs, documented in §9). **Axiom audit computed true** on the full graph (connected 253/253, 0 isolated, reachability fill 1.000, 20 self-loops, 33 signed edges). Spectral results (all derived, not asserted): λ₂ = 1.568 → one person, not eight; Fiedler split = dispositional shore {TEM, DEV, PER} vs. transactional shore {NEED, ME, DIS, THER, SYS} with **personality as the bridge** (|v₂| = 0.015); engine loop NEED→ME→NEED (+0.400) vs. brake loop DIS→THER→DIS (−0.455). Weighting method stated as **seven rules W1–W7** (structure-before-weights → anchored priors → algebraic signs → direction criteria → gates → provenance → estimation pathway); node weight disambiguated (structural importance vs. activation vs. elevation). **Topographical model**: state landscape h(p) = Σ xᵢK(‖p−pᵢ‖) (peaks = load, valleys = resources) + heat-map profile + attractor landscape. **New diagnostic method: Topographic Network Diagnosis (TND)**, 7 steps, output = topographic formulation (landscape + loop gains + dynamic class settled/pinned/trapped/fragile + control plan), categorical labels recoverable as landscape regions. Fully computed worked case (Sara, 16; κ = 0.42 = 0.92 κ\*, monostable-high "pinned not trapped"; treatment u = 0.8 → DIS 0.77→0.25 but ρ(J) 0.49→0.84 = **fragile remission**; withdrawal → full relapse; edge surgery + maintenance → 0.53 = state-shifting vs. structure-changing distinction). Validity/reliability section incl. 11-property comparison table vs. DSM-5/ICD-11/HiTOP/RDoC/symptom networks; 3-layer validation roadmap; all numbers reproduced by `scripts/verify_math.py`. 5 figures (great graph, 253×253 block matrix, case topography, TND workflow, control + bifurcation). New self-found asterisked refs: Hull 1943, Dohrenwend et al. 1992, Roberts et al. 2017, Ryan & Deci 2017, Kuppens et al. 2010, Regier et al. 2013, Martinez-Martin et al. 2021.
 
-## Remaining
+The Batch J reachability value of 1.000 is the formal
+**aggregation/broadcast semantic audit**: hierarchical and binding relations
+carry influence in both directions. It is not raw mutual reachability. On the
+unaugmented directed registry, reachability fill is **0.338525** and **109
+nodes have zero outdegree**.
 
-- **K — Applications:** 5W1H for clinicians, patients, and everyday users. Builds on TND (Batch J §8) and the "Who" analysis (Batch J §3); the patient-facing/self-mapping use is explicitly deferred to K.
+## Current study frontier
+
+Batch K exists, but its validated evidence remains E0 formal computation, E1
+in-family synthetic recovery, and a bounded cross-sectional PER measurement
+audit. The legacy N=1 longitudinal findings are quarantined. The next study
+must run the corrected calendar pipeline, fair multi-seed/OOD benchmarks, and
+external longitudinal comparisons under the command-center gates before any
+real-world performance claim.
 
 ## Conventions for future batches
 
-Source folders live in `8-Dimention Model Sources/` with per-folder registry CSVs; verify citation metadata against the PDFs themselves (registry has occasional errors). Escape citation asterisks (`\*`) in markdown body before pandoc. Build: `pandoc <ms>.md -f markdown+tex_math_dollars -t docx`, then render-check via LibreOffice/pdftoppm.
+Dimension registries live in `registries/`; packaged stratum snapshots live in
+`src/upg/data/`. Authoring CSVs use the current
+`batches/<letter>-<slug>/data/` layout and can be checked or synchronized with
+`python scripts/sync_registries.py`. Verify citation metadata against source
+documents. Escape citation asterisks (`\*`) before pandoc; render-check any
+generated DOCX before release.

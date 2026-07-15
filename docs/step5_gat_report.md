@@ -2,9 +2,11 @@
 
 Status: Phase 2, step 5 complete.
 Source run: `upg/scripts/gat_study.py`, output `upg/datasets/gat_v1/`.
-Settings: one model per preset; training = 240 persons × T ∈ {30, 60, 120, 250}
-(960 windows, fresh noise/missingness per length), validation = 60 persons,
-evaluation = the same 40-person seed-0 populations that produced
+Settings: one model per preset; training = four independently simulated
+240-person populations, one per T ∈ {30, 60, 120, 250} (960 person-windows;
+no identities are followed across T), validation = four independently
+simulated 60-person populations (240 person-windows), evaluation = the same
+40-person seed-0 populations that produced
 `step4_baseline_report.md`. Same skeleton (W1), same prior (W7).
 Reproduced by `tests/test_gat.py`; engine gradchecked by `tests/test_autodiff.py`.
 
@@ -20,7 +22,7 @@ The design of record from the reading notes (08, 17, 33, 37, 41):
 | Init | readout zero-initialized → the untrained model returns the prior exactly | 33 (LoRA), W7 |
 | Uncertainty | heteroscedastic Gaussian per edge in log-deviation space → 90% intervals | 13 |
 | Protocol | amortized: population-train on simulated persons, one forward pass per unseen person | 04, 41, 42 |
-| Training guarantee | early stopping seeded with the init (= prior) state: the returned model is never worse than the prior on validation | W7 |
+| Training safeguard | early stopping seeded with the init (= prior) state: the returned model is no worse on the composite validation objective; individual metrics/test cells are not guaranteed | W7 |
 
 Implementation is pure NumPy on the package's own gradchecked reverse-mode
 autodiff (`upg/autodiff.py`) — exact, seeded, bit-deterministic (requirements
@@ -32,7 +34,7 @@ it infers everything from the observation window.
 
 ## Headline results (median over persons; "bar" = best step-4 value per cell)
 
-Edge RMSE (prior-alone floor ≈ 0.081 / 0.098 by preset):
+Edge RMSE (prior-only comparator ≈ 0.081 / 0.098 by preset):
 
 | Preset | T | GAT | bar (method) | GAT dev-corr | bar | GAT ρ-err | bar |
 |---|---:|---:|---:|---:|---:|---:|---:|
@@ -45,7 +47,7 @@ Edge RMSE (prior-alone floor ≈ 0.081 / 0.098 by preset):
 
 Contract verdicts across all 12 cells (3 presets × 4 T): the GAT beats the
 best step-4 baseline on **edge RMSE 12/12**, **deviation correlation 12/12**,
-**ρ(J) error 12/12**, attractor error 12/12 within rounding (0.016–0.026),
+**ρ(J) error 12/12**, attractor error 5/12 (GAT range 0.016–0.026),
 κ\*-error 0.006–0.012, and regime accuracy 8/12 (it loses regime only on
 `clinical_realistic`, where `ev`/`step3` reach 0.95–0.975 vs. GAT 0.875–0.925).
 Full tables: `datasets/gat_v1/gat_results.json`; figure:
@@ -56,10 +58,11 @@ Full tables: `datasets/gat_v1/gat_results.json`; figure:
 ### 1. Amortization dissolves step 4's shrinkage dilemma
 
 The step-4 estimators paid an absolute-RMSE price for personalizing (kalman
-0.13–0.24 vs. prior floor 0.08–0.10) because per-person fitting must move off
-the prior to capture anything. The amortized estimator sits *at* the prior
-floor (0.078–0.098) **and simultaneously** carries the best personalization
-signal yet (dev-corr up to 0.34). It can do both because the population
+0.13–0.24 vs. prior comparator 0.08–0.10) because per-person fitting must move
+off the prior to capture anything. The amortized estimator remains near that
+prior comparator (0.078–0.098), beating it in 9/12 cells, **and simultaneously**
+carries the best personalization signal yet (dev-corr up to 0.34). It can do
+both because the population
 taught it *which* deviations the data support at which window lengths — the
 "learned, preconditioned, prior-informed" estimator note 41 predicted. The
 data-volume features (log-transitions, missingness) are the visible dial:
@@ -111,7 +114,7 @@ size per notes 35–36) trained once per preset in ≈ 12–19 s of CPU time.
 
 | Axis | New bar (GAT) |
 |---|---|
-| Edge RMSE | 0.078–0.098 (≈ the prior floor, at every T) |
+| Edge RMSE | 0.078–0.098 (near prior comparator; wins 9/12 cells) |
 | Deviation corr | 0.30 (clinical T=250), 0.34 (transition T=250) |
 | ρ(J) error | 0.015–0.026 |
 | Regime accuracy | 0.85–0.975 (but ev/step3 remain the bar on clinical: 0.975) |

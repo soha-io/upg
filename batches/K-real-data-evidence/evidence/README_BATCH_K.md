@@ -1,11 +1,20 @@
 # Batch K deliverables
 
-Start with `batch-k-report.html`. It is self-contained and includes the executive evidence dashboard, interactive admissibility gate, complete Batch K article, results figures, and supplementary methods.
+> **Active chronology quarantine (2026-07-15).** The legacy Kossakowski ESM
+> analysis sorted day-of-year across two calendar years. Every related real
+> result, claim, figure, manuscript rendering, and HTML report is retained only
+> as a frozen audit fixture and is not current evidence. Read
+> `../CHRONOLOGY_QUARANTINE.md` and `../chronology_quarantine.json` first.
+
+`batch-k-report.html` is the frozen historical bundle. It is self-contained,
+but its Kossakowski sections are quarantined and must be read only alongside
+the notice above. Current synthetic and standalone IPIP artifacts remain
+available for audit.
 
 ## Publication and evidence files
 
-- `batch_k_manuscript.md` — article manuscript with author/declaration placeholders.
-- `batch_k_methods_appendix.md` — exact source audit, scoring, statistics, training provenance, and commands.
+- `../manuscript_K.md` — frozen article manuscript with author/declaration placeholders and quarantined ESM claims.
+- `../manuscript_src/methods_appendix.md` — methods, provenance, corrected commands, and quarantine notice.
 - `batch_k_source_cards.csv` — source role and limitation cards.
 - `batch_k_claim_ledger.csv` — authoritative claim/evidence/status language boundary.
 - `MODEL_CARD.md` — intended use, prohibited use, data, performance, and validation path.
@@ -18,6 +27,6 @@ The ZIP contains the files above plus executable analysis scripts, aggregate res
 
 ## Scientific status
 
-The current release supports reproducible formal computation, strong in-family synthetic recovery, a large cross-sectional PER measurement audit, and a narrow one-person concurrent ME result. It also records five facet exceptions, unsupported early-warning indicators, and a real rolling forecast that lost to persistence. It does not validate complete diagnosis, prescribing, causal treatment selection, clinical benefit, or cure.
+The current release supports reproducible formal computation, strong in-family synthetic recovery, and a large cross-sectional PER measurement audit. The prior one-person ME/forecast findings are chronology-quarantined pending a calendar-corrected rerun and independent verification. It does not validate complete diagnosis, prescribing, causal treatment selection, clinical benefit, or cure.
 
 Before journal submission, replace author and affiliation placeholders; add ethics/consent identifiers for any new prospective study; supply funding, conflicts, contributions, data-availability, and code-availability declarations; select the target journal; and format the manuscript and references to that journal's house style.

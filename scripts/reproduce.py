@@ -12,6 +12,8 @@ from __future__ import annotations
 import os
 import sys
 
+import numpy as np
+
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "src"))
 
 from upg import (axiom_audit, build_person_graph, case_report,  # noqa: E402
@@ -39,7 +41,18 @@ def main() -> None:
     print(f"Axiom 1 (connectivity): weakly connected = {a.weakly_connected} "
           f"({a.component_size}/{a.n_nodes})")
     print(f"Axiom 2 (non-dismissibility): isolated nodes = {a.isolated_nodes}")
-    print(f"Axiom 3 (mediated influence): reachability fill = {a.reachability_fill:.3f}")
+    raw = pg.directed_boolean()
+    closure = raw.copy()
+    for k in range(pg.n):
+        closure |= np.outer(closure[:, k], closure[k, :])
+    np.fill_diagonal(closure, False)
+    raw_fill = closure.sum() / (pg.n * (pg.n - 1))
+    raw_sinks = int((raw.sum(axis=1) == 0).sum())
+    print(
+        "Axiom 3 (mediated influence): aggregation/broadcast semantic "
+        f"reachability = {a.reachability_fill:.3f}; raw directed fill = "
+        f"{raw_fill:.6f}; raw zero-outdegree nodes = {raw_sinks}"
+    )
     print(f"Axiom 4 (self-influence): self-loops = {a.self_loops}")
     print(f"Axiom 5 (signed superposition): negative edges = {a.negative_edges}")
 

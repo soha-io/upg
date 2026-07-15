@@ -1,7 +1,13 @@
 # Data — pointers only
 
 Raw and processed datasets are **not** stored in this public repo (license/size).
-Fetch from the canonical sources below; verify against `checksums.sha256` (to be added).
+Fetch from the canonical sources below and verify the 10 currently registered
+public files against `checksums.sha256`. The checksum inventory is partial: a
+file absent from it is not thereby verified.
+
+The extracted Office owner/lock file `~$ESMdata_Fixed.xlsx` is intentionally
+excluded. It is not a dataset; the immutable upstream `ESMdata.zip` remains
+hash-registered and preserves the original archive member for provenance.
 
 | Dataset | Access | License | Location |
 |---|---|---|---|

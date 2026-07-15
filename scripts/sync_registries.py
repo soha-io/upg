@@ -1,69 +1,83 @@
 #!/usr/bin/env python3
-"""
-Refresh the vendored registries from the authoring batch folders.
+"""Check or refresh packaged registry snapshots from the current layout.
 
-The package vendors a canonical snapshot of the eight strata + dimension
-registries under ``src/upg/data`` so it is self-contained.  When you edit a
-registry in its batch folder, run this to re-sync:
-
-    python scripts/sync_registries.py
-
-It copies from ``<model root>/Batch X - .../data/`` into the package data dir
-and reports which files changed.  The model root is assumed to be the parent
-of this repository (i.e. the folder that holds both ``upg/`` and the batch
-folders).
+The public repository includes the dimension authoring registries under
+``registries/``.  Stratum authoring CSVs may be supplied in each current
+``batches/<letter>-<slug>/data`` directory; when absent, their already
+versioned package snapshots remain authoritative for this public release.
+Use ``--write`` for mutation.  The safe default is a parity check.
 """
 from __future__ import annotations
 
+import argparse
 import filecmp
-import os
 import shutil
+from pathlib import Path
 
-HERE = os.path.dirname(os.path.abspath(__file__))
-REPO = os.path.dirname(HERE)
-MODEL_ROOT = os.path.dirname(REPO)
-DATA = os.path.join(REPO, "src", "upg", "data")
 
-# file stem -> batch folder name
-SOURCES = {
-    "udg":     "Batch A - Psychopathology",
-    "utg":     "Batch B - Psychotherapy",
-    "udevg":   "Batch C - Developmental",
-    "uperg":   "Batch D - Personality",
-    "utempg":  "Batch E - Temperament",
-    "uneedg":  "Batch F - Needs",
-    "umeg":    "Batch G - Motivation & Emotion",
-    "usysg":   "Batch H - Systems",
+REPO = Path(__file__).resolve().parents[1]
+PACKAGE_DATA = REPO / "src" / "upg" / "data"
+STRATA = {
+    "udg": "A-psychopathology",
+    "utg": "B-psychotherapy",
+    "udevg": "C-developmental",
+    "uperg": "D-personality",
+    "utempg": "E-temperament",
+    "uneedg": "F-needs",
+    "umeg": "G-motivation-emotion",
+    "usysg": "H-systems",
 }
-DIMENSION = ("Batch J - Eight-Dimension Model",
-             ["upg_dimension_nodes.csv", "upg_dimension_edges.csv"])
 
 
-def _sync(src: str, dst: str) -> bool:
-    if not os.path.exists(src):
-        print(f"  MISSING source: {src}")
-        return False
-    changed = not (os.path.exists(dst) and filecmp.cmp(src, dst, shallow=False))
-    shutil.copyfile(src, dst)
-    print(f"  {'UPDATED' if changed else 'unchanged'}: {os.path.basename(dst)}")
-    return changed
-
-
-def main() -> None:
-    n_changed = 0
-    for stem, folder in SOURCES.items():
+def source_pairs(root: Path) -> list[tuple[Path, Path]]:
+    pairs = []
+    for stem, folder in STRATA.items():
         for kind in ("nodes", "edges"):
-            src = os.path.join(MODEL_ROOT, folder, "data", f"{stem}_{kind}.csv")
-            dst = os.path.join(DATA, f"{stem}_{kind}.csv")
-            n_changed += _sync(src, dst)
-    folder, files = DIMENSION
-    for name in files:
-        src = os.path.join(MODEL_ROOT, folder, "data", name)
-        dst = os.path.join(DATA, name)
-        n_changed += _sync(src, dst)
-    print(f"\n{n_changed} file(s) updated. Re-run the test suite to confirm "
-          f"the published numbers still hold.")
+            name = f"{stem}_{kind}.csv"
+            pairs.append((root / "batches" / folder / "data" / name,
+                          PACKAGE_DATA / name))
+    for name in ("upg_dimension_nodes.csv", "upg_dimension_edges.csv"):
+        pairs.append((root / "registries" / name, PACKAGE_DATA / name))
+    return pairs
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--source-root", type=Path, default=REPO,
+                        help="UPG authoring root (default: this repository)")
+    parser.add_argument("--write", action="store_true",
+                        help="copy available changed sources into package data")
+    parser.add_argument("--require-all", action="store_true",
+                        help="fail when private/unpublished stratum sources are absent")
+    args = parser.parse_args()
+
+    changed = missing = 0
+    for source, destination in source_pairs(args.source_root.resolve()):
+        if not source.is_file():
+            missing += 1
+            print(f"SKIP unavailable authoring source: {source}")
+            continue
+        same = destination.is_file() and filecmp.cmp(source, destination, shallow=False)
+        if same:
+            print(f"PASS {source.relative_to(args.source_root.resolve())}")
+            continue
+        changed += 1
+        if args.write:
+            destination.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(source, destination)
+            print(f"UPDATED {destination.relative_to(REPO)}")
+        else:
+            print(f"STALE {destination.relative_to(REPO)}")
+
+    if changed and not args.write:
+        print(f"registry check failed: {changed} available snapshot(s) stale")
+        return 1
+    if missing and args.require_all:
+        print(f"registry check failed: {missing} required source(s) missing")
+        return 1
+    print(f"registry check complete: {changed} changed, {missing} unavailable")
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())

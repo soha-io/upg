@@ -1,180 +1,261 @@
+#!/usr/bin/env python3
+"""Compose and verify the Great Graph from canonical public registries.
+
+The safe default is ``--check``: compose entirely in memory, enforce the
+published census/encapsulation invariants, and require byte parity with both
+canonical and Batch-J mirrors. ``--write`` is explicit and occurs only after
+all invariants pass.
 """
-Batch J — Great Graph composition.
+from __future__ import annotations
 
-Reads the eight strata's node/edge CSVs (Batches A–H), namespaces every node
-with its stratum prefix, adds (i) the synthetic THER mother node over the
-UTG workflow, (ii) interface-binding edges that stitch each stratum's
-interface nodes to the partner stratum's mother node, and (iii)
-mother-to-mother edges for couplings that have no interface node,
-taken from data/upg_dimension_edges.csv.
-
-Encapsulation rule (project spec J.4): a stratum's internal nodes never
-connect directly to another stratum's internal nodes. Every cross-stratum
-edge in the output touches a mother node or an interface node bound to a
-mother node. The script enforces and audits this.
-
-Outputs: data/upg_greatgraph_nodes.csv, data/upg_greatgraph_edges.csv
-Run: python3 compose_greatgraph.py
-"""
+import argparse
 import csv
+import io
 import os
+from pathlib import Path
+import tempfile
 
-HERE = os.path.dirname(os.path.abspath(__file__))
-ROOT = os.path.normpath(os.path.join(HERE, "..", ".."))
-DATA = os.path.join(HERE, "..", "data")
+
+REPO = Path(__file__).resolve().parents[3]
+PACKAGE_DATA = REPO / "src" / "upg" / "data"
+REGISTRIES = REPO / "registries"
+J_DATA = Path(__file__).resolve().parents[1] / "data"
 
 STRATA = {
-    "DIS":  ("Batch A - Psychopathology",            "udg",    "P"),
-    "THER": ("Batch B - Psychotherapy",               "utg",    None),  # mother synthesized
-    "DEV":  ("Batch C - Developmental",               "udevg",  "D"),
-    "PER":  ("Batch D - Personality",                 "uperg",  "P"),
-    "TEM":  ("Batch E - Temperament",                 "utempg", "T"),
-    "NEED": ("Batch F - Needs",                       "uneedg", "N"),
-    "ME":   ("Batch G - Motivation & Emotion",        "umeg",   "ME"),
-    "SYS":  ("Batch H - Systems",                     "usysg",  "SYS"),
+    "DIS":  ("udg",    "P", "A"),
+    "THER": ("utg",    None, "B"),
+    "DEV":  ("udevg",  "D", "C"),
+    "PER":  ("uperg",  "P", "D"),
+    "TEM":  ("utempg", "T", "E"),
+    "NEED": ("uneedg", "N", "F"),
+    "ME":   ("umeg",   "ME", "G"),
+    "SYS":  ("usysg",  "SYS", "H"),
 }
 
-# Interface bindings: (stratum, interface_node, partner_stratum, direction)
-# direction "out": stratum.interface -> partner mother
-# direction "in" : partner mother -> stratum.interface
-# direction "both": both edges
 BINDINGS = [
-    ("TEM",  "PERS_IF",   "PER",  "out"),
-    ("TEM",  "OUT_ADJ",   "DIS",  "out"),
-    ("NEED", "MOT_IF",    "ME",   "out"),
-    ("NEED", "PERS_IF",   "PER",  "in"),
-    ("ME",   "NEEDS_IF",  "NEED", "in"),
-    ("ME",   "SYS_IF",    "SYS",  "both"),
-    ("ME",   "PERS_IF",   "PER",  "in"),
-    ("ME",   "TEMP_IF",   "TEM",  "in"),
-    ("ME",   "DIS_IF",    "DIS",  "out"),
-    ("ME",   "THER_IF",   "THER", "in"),
-    ("SYS",  "PERSON_IF", "PER",  "out"),
-    ("SYS",  "NEEDS_IF",  "NEED", "out"),
-    ("SYS",  "ME_IF",     "ME",   "out"),
-    ("SYS",  "DEV_IF",    "DEV",  "out"),
-    ("SYS",  "DIS_IF",    "DIS",  "out"),
-    ("SYS",  "THER_IF",   "THER", "in"),
+    ("TEM", "PERS_IF", "PER", "out"),
+    ("TEM", "OUT_ADJ", "DIS", "out"),
+    ("NEED", "MOT_IF", "ME", "out"),
+    ("NEED", "PERS_IF", "PER", "in"),
+    ("ME", "NEEDS_IF", "NEED", "in"),
+    ("ME", "SYS_IF", "SYS", "both"),
+    ("ME", "PERS_IF", "PER", "in"),
+    ("ME", "TEMP_IF", "TEM", "in"),
+    ("ME", "DIS_IF", "DIS", "out"),
+    ("ME", "THER_IF", "THER", "in"),
+    ("SYS", "PERSON_IF", "PER", "out"),
+    ("SYS", "NEEDS_IF", "NEED", "out"),
+    ("SYS", "ME_IF", "ME", "out"),
+    ("SYS", "DEV_IF", "DEV", "out"),
+    ("SYS", "DIS_IF", "DIS", "out"),
+    ("SYS", "THER_IF", "THER", "in"),
 ]
-BIND_W = 0.90  # binding edges are near-identity conduits
+BIND_W = 0.90
+MOTHER_PAIRS = {
+    ("TEM", "DEV"), ("DEV", "TEM"), ("DEV", "PER"), ("DEV", "NEED"),
+    ("DEV", "ME"), ("DEV", "DIS"), ("PER", "DIS"), ("PER", "SYS"),
+    ("SYS", "PER"), ("ME", "NEED"), ("DIS", "THER"), ("THER", "DIS"),
+    ("THER", "TEM"), ("THER", "PER"), ("THER", "NEED"), ("DIS", "NEED"),
+    ("DIS", "SYS"), ("NEED", "DIS"),
+}
+EXPECTED = {
+    "nodes": 253,
+    "edges": 522,
+    "cross_stratum": 35,
+    "self_loops": 20,
+    "negative_edges": 33,
+    "encapsulation_violations": 0,
+}
 
-# Dimension-level pairs whose coupling has NO interface node on either side;
-# stitched mother-to-mother using the dimension edge table.
-MOTHER_PAIRS = {("TEM", "DEV"), ("DEV", "TEM"), ("DEV", "PER"), ("DEV", "NEED"),
-                ("DEV", "ME"), ("DEV", "DIS"), ("PER", "DIS"), ("PER", "SYS"),
-                ("SYS", "PER"), ("ME", "NEED"), ("DIS", "THER"), ("THER", "DIS"),
-                ("THER", "TEM"), ("THER", "PER"), ("THER", "NEED"),
-                ("DIS", "NEED"), ("DIS", "SYS"), ("NEED", "DIS")}
+
+def read_csv(path: Path) -> list[dict[str, str]]:
+    with path.open(newline="", encoding="utf-8") as handle:
+        return list(csv.DictReader(handle))
 
 
-def read_csv(path):
-    with open(path, newline="", encoding="utf-8") as fh:
-        return list(csv.DictReader(fh))
-
-
-def main():
-    nodes, edges = [], []
-    mother = {}
-
-    for pref, (folder, stem, mother_id) in STRATA.items():
-        ndir = os.path.join(ROOT, folder, "data", f"{stem}_nodes.csv")
-        edir = os.path.join(ROOT, folder, "data", f"{stem}_edges.csv")
-        for r in read_csv(ndir):
+def compose() -> tuple[list[dict[str, str]], list[dict[str, str]]]:
+    nodes: list[dict[str, str]] = []
+    edges: list[dict[str, str]] = []
+    mother: dict[str, str] = {}
+    for prefix, (stem, mother_id, batch) in STRATA.items():
+        for row in read_csv(PACKAGE_DATA / f"{stem}_nodes.csv"):
             nodes.append({
-                "node_id": f"{pref}.{r['node_id']}",
-                "stratum": pref,
-                "label": r.get("label", ""),
-                "level": r.get("level", ""),
-                "parent": f"{pref}.{r['parent']}" if r.get("parent") else "",
+                "node_id": f"{prefix}.{row['node_id']}",
+                "stratum": prefix,
+                "label": row.get("label", ""),
+                "level": row.get("level", ""),
+                "parent": f"{prefix}.{row['parent']}" if row.get("parent") else "",
                 "role": "internal",
             })
-        for r in read_csv(edir):
+        for row in read_csv(PACKAGE_DATA / f"{stem}_edges.csv"):
             edges.append({
-                "source": f"{pref}.{r['source']}",
-                "target": f"{pref}.{r['target']}",
-                "weight": r["weight"],
-                "sign": r["sign"],
-                "type": r["type"],
-                "gate": r.get("gate", "none") or "none",
-                "origin": f"Batch {folder.split(' - ')[0][-1]}",
+                "source": f"{prefix}.{row['source']}",
+                "target": f"{prefix}.{row['target']}",
+                "weight": row["weight"],
+                "sign": row["sign"],
+                "type": row["type"],
+                "gate": row.get("gate", "none") or "none",
+                "origin": f"Batch {batch}",
             })
         if mother_id:
-            mother[pref] = f"{pref}.{mother_id}"
+            mother[prefix] = f"{prefix}.{mother_id}"
 
-    # Synthesize the THER mother over the UTG workflow phases N01–N11
     mother["THER"] = "THER.THER"
-    nodes.append({"node_id": "THER.THER", "stratum": "THER",
-                  "label": "Universal therapy workflow (mother node, synthesized at composition)",
-                  "level": "-1", "parent": "", "role": "mother"})
-    for i in range(1, 12):
-        edges.append({"source": "THER.THER", "target": f"THER.N{i:02d}",
-                      "weight": "0.85", "sign": "+", "type": "hierarchical",
-                      "gate": "none", "origin": "Batch J (composition)"})
+    nodes.append({
+        "node_id": "THER.THER",
+        "stratum": "THER",
+        "label": "Universal therapy workflow (mother node, synthesized at composition)",
+        "level": "-1",
+        "parent": "",
+        "role": "mother",
+    })
+    for index in range(1, 12):
+        edges.append({
+            "source": "THER.THER", "target": f"THER.N{index:02d}",
+            "weight": "0.85", "sign": "+", "type": "hierarchical",
+            "gate": "none", "origin": "Batch J (composition)",
+        })
 
-    # Mark mother and interface roles
-    for n in nodes:
-        if n["node_id"] in mother.values():
-            n["role"] = "mother"
-        elif n["node_id"].split(".", 1)[1].endswith("_IF") or \
-                n["node_id"].split(".", 1)[1] in ("OUT_ADJ", "PERSON_IF"):
-            n["role"] = "interface"
+    for node in nodes:
+        if node["node_id"] in mother.values():
+            node["role"] = "mother"
+        else:
+            local = node["node_id"].split(".", 1)[1]
+            if local.endswith("_IF") or local in ("OUT_ADJ", "PERSON_IF"):
+                node["role"] = "interface"
 
-    # Implicit hierarchical edges: several strata encode part of their
-    # decomposition only in the nodes' parent column (UTG subnodes, UDevG
-    # mechanisms, UPerG adaptation/narrative subnodes). Materialize
-    # parent -> child edges where no explicit edge exists in either direction.
-    have = {(e["source"], e["target"]) for e in edges}
-    for nrow in nodes:
-        p, c = nrow["parent"], nrow["node_id"]
-        if p and (p, c) not in have and (c, p) not in have:
-            edges.append({"source": p, "target": c, "weight": "0.80",
-                          "sign": "+", "type": "hierarchical-implicit",
-                          "gate": "none", "origin": "Batch J (parent field)"})
+    existing = {(edge["source"], edge["target"]) for edge in edges}
+    for node in nodes:
+        parent, child = node["parent"], node["node_id"]
+        if parent and (parent, child) not in existing and (child, parent) not in existing:
+            edges.append({
+                "source": parent, "target": child, "weight": "0.80", "sign": "+",
+                "type": "hierarchical-implicit", "gate": "none",
+                "origin": "Batch J (parent field)",
+            })
 
-    # Interface-binding edges
-    for strat, iface, partner, direction in BINDINGS:
-        a, b = f"{strat}.{iface}", mother[partner]
+    for stratum, interface, partner, direction in BINDINGS:
+        source, target = f"{stratum}.{interface}", mother[partner]
         if direction in ("out", "both"):
-            edges.append({"source": a, "target": b, "weight": str(BIND_W),
-                          "sign": "+", "type": "binding", "gate": "none",
-                          "origin": "Batch J (composition)"})
+            edges.append({
+                "source": source, "target": target, "weight": str(BIND_W),
+                "sign": "+", "type": "binding", "gate": "none",
+                "origin": "Batch J (composition)",
+            })
         if direction in ("in", "both"):
-            edges.append({"source": b, "target": a, "weight": str(BIND_W),
-                          "sign": "+", "type": "binding", "gate": "none",
-                          "origin": "Batch J (composition)"})
+            edges.append({
+                "source": target, "target": source, "weight": str(BIND_W),
+                "sign": "+", "type": "binding", "gate": "none",
+                "origin": "Batch J (composition)",
+            })
 
-    # Mother-to-mother stitches for interface-less couplings
-    for r in read_csv(os.path.join(DATA, "upg_dimension_edges.csv")):
-        if (r["source"], r["target"]) in MOTHER_PAIRS and r["source"] != r["target"]:
-            edges.append({"source": mother[r["source"]], "target": mother[r["target"]],
-                          "weight": r["weight"], "sign": r["sign"],
-                          "type": f"interstratum-{r['type']}", "gate": r["gate"],
-                          "origin": "Batch J (dimension edge)"})
+    for row in read_csv(REGISTRIES / "upg_dimension_edges.csv"):
+        pair = (row["source"], row["target"])
+        if pair in MOTHER_PAIRS and row["source"] != row["target"]:
+            edges.append({
+                "source": mother[row["source"]], "target": mother[row["target"]],
+                "weight": row["weight"], "sign": row["sign"],
+                "type": f"interstratum-{row['type']}", "gate": row["gate"],
+                "origin": "Batch J (dimension edge)",
+            })
+    return nodes, edges
 
-    # ---- Encapsulation audit -------------------------------------------
-    roles = {n["node_id"]: n["role"] for n in nodes}
-    strat_of = {n["node_id"]: n["stratum"] for n in nodes}
-    violations = []
-    for e in edges:
-        s, t = e["source"], e["target"]
-        if strat_of[s] != strat_of[t]:
-            ok = roles[s] in ("mother", "interface") or roles[t] in ("mother", "interface")
-            if not ok:
-                violations.append((s, t))
-    print(f"nodes: {len(nodes)}  edges: {len(edges)}")
-    print(f"cross-stratum edges: {sum(1 for e in edges if strat_of[e['source']] != strat_of[e['target']])}")
-    print(f"encapsulation violations: {len(violations)}", violations[:5])
 
-    with open(os.path.join(DATA, "upg_greatgraph_nodes.csv"), "w", newline="",
-              encoding="utf-8") as fh:
-        w = csv.DictWriter(fh, fieldnames=list(nodes[0].keys()))
-        w.writeheader(); w.writerows(nodes)
-    with open(os.path.join(DATA, "upg_greatgraph_edges.csv"), "w", newline="",
-              encoding="utf-8") as fh:
-        w = csv.DictWriter(fh, fieldnames=list(edges[0].keys()))
-        w.writeheader(); w.writerows(edges)
-    print("written: upg_greatgraph_nodes.csv, upg_greatgraph_edges.csv")
+def validate(nodes: list[dict[str, str]], edges: list[dict[str, str]]) -> dict[str, int]:
+    node_ids = [node["node_id"] for node in nodes]
+    if len(node_ids) != len(set(node_ids)):
+        raise ValueError("duplicate node IDs in composed graph")
+    known = set(node_ids)
+    dangling = [(edge["source"], edge["target"]) for edge in edges
+                if edge["source"] not in known or edge["target"] not in known]
+    if dangling:
+        raise ValueError(f"dangling composed edges: {dangling[:5]}")
+    roles = {node["node_id"]: node["role"] for node in nodes}
+    strata = {node["node_id"]: node["stratum"] for node in nodes}
+    cross = [edge for edge in edges if strata[edge["source"]] != strata[edge["target"]]]
+    violations = [
+        (edge["source"], edge["target"]) for edge in cross
+        if roles[edge["source"]] not in ("mother", "interface")
+        and roles[edge["target"]] not in ("mother", "interface")
+    ]
+    actual = {
+        "nodes": len(nodes),
+        "edges": len(edges),
+        "cross_stratum": len(cross),
+        "self_loops": sum(edge["source"] == edge["target"] for edge in edges),
+        "negative_edges": sum(edge["sign"] == "-" for edge in edges),
+        "encapsulation_violations": len(violations),
+    }
+    if actual != EXPECTED:
+        raise ValueError(f"composition invariant mismatch: expected {EXPECTED}, got {actual}")
+    return actual
+
+
+def serialize(rows: list[dict[str, str]]) -> bytes:
+    buffer = io.StringIO(newline="")
+    writer = csv.DictWriter(buffer, fieldnames=list(rows[0]))
+    writer.writeheader()
+    writer.writerows(rows)
+    return buffer.getvalue().encode("utf-8")
+
+
+def expected_paths() -> dict[str, tuple[Path, Path]]:
+    return {
+        "nodes": (
+            REGISTRIES / "upg_greatgraph_nodes.csv",
+            J_DATA / "upg_greatgraph_nodes.csv",
+        ),
+        "edges": (
+            REGISTRIES / "upg_greatgraph_edges.csv",
+            J_DATA / "upg_greatgraph_edges.csv",
+        ),
+    }
+
+
+def check_parity(payloads: dict[str, bytes]) -> None:
+    mismatches = []
+    for kind, paths in expected_paths().items():
+        for path in paths:
+            if not path.is_file() or path.read_bytes() != payloads[kind]:
+                mismatches.append(path.relative_to(REPO).as_posix())
+    if mismatches:
+        raise ValueError("composed bytes differ from checked-in registry: " + ", ".join(mismatches))
+
+
+def atomic_write(path: Path, payload: bytes) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    descriptor, temporary = tempfile.mkstemp(prefix=f".{path.name}.", dir=path.parent)
+    try:
+        with os.fdopen(descriptor, "wb") as handle:
+            handle.write(payload)
+            handle.flush()
+            os.fsync(handle.fileno())
+        os.replace(temporary, path)
+    except BaseException:
+        if os.path.exists(temporary):
+            os.unlink(temporary)
+        raise
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    mode = parser.add_mutually_exclusive_group()
+    mode.add_argument("--check", action="store_true", help="verify invariants and byte parity (default)")
+    mode.add_argument("--write", action="store_true", help="explicitly refresh canonical and Batch-J mirrors")
+    args = parser.parse_args()
+    nodes, edges = compose()
+    actual = validate(nodes, edges)  # every failure occurs before any write
+    payloads = {"nodes": serialize(nodes), "edges": serialize(edges)}
+    if args.write:
+        for kind, paths in expected_paths().items():
+            for path in paths:
+                atomic_write(path, payloads[kind])
+        print(f"wrote verified Great Graph: {actual}")
+        return 0
+    check_parity(payloads)
+    print(f"verified Great Graph invariants and byte parity: {actual}")
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())

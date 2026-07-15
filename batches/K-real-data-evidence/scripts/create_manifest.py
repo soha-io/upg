@@ -1,44 +1,103 @@
 #!/usr/bin/env python3
-"""Create the deterministic file manifest for the Batch K bundle."""
+"""Generate or verify the current-layout Batch K artifact manifest.
 
+The uploaded release manifest at ``evidence/manifest.json`` is historical and
+is never rewritten by this command.  Writing the current snapshot requires an
+explicit ``--write``; verification is the safe default.
+"""
 from __future__ import annotations
 
+import argparse
 import hashlib
 import json
 from pathlib import Path
+import subprocess
 
 
-ROOT = Path(__file__).resolve().parents[1]
+REPO = Path(__file__).resolve().parents[3]
+BATCH_ROOT = Path(__file__).resolve().parents[1]
+MANIFEST = BATCH_ROOT / "artifact_manifest.json"
 
 
 def digest(path: Path) -> str:
-    h = hashlib.sha256()
-    with path.open("rb") as fh:
-        for block in iter(lambda: fh.read(1024 * 1024), b""):
-            h.update(block)
-    return h.hexdigest()
+    value = hashlib.sha256()
+    with path.open("rb") as handle:
+        for block in iter(lambda: handle.read(1024 * 1024), b""):
+            value.update(block)
+    return value.hexdigest()
 
 
-files = []
-for path in sorted(ROOT.rglob("*")):
-    if path.is_file() and path.name != "manifest.json":
-        files.append({
-            "path": str(path.relative_to(ROOT)),
+def inventory() -> list[dict]:
+    proc = subprocess.run(
+        ["git", "ls-files", "--cached", "--others", "--exclude-standard", "-z"],
+        cwd=REPO,
+        capture_output=True,
+        check=True,
+    )
+    rows = []
+    relatives = sorted(
+        Path(raw.decode("utf-8")) for raw in proc.stdout.split(b"\0") if raw
+    )
+    manifest_relative = MANIFEST.relative_to(REPO)
+    for relative in relatives:
+        if relative == manifest_relative:
+            continue
+        path = REPO / relative
+        if not path.is_file():
+            continue
+        rows.append({
+            "path": relative.as_posix(),
             "bytes": path.stat().st_size,
             "sha256": digest(path),
         })
+    return rows
 
-manifest = {
-    "release": "Batch K evidence release 2026-07-12",
-    "superseded_input_excluded": "psych-lab-main(2).zip",
-    "raw_input_sha256": {
-        "psych-lab-main(1).zip": "4514b847d16b0cd9c20a1aa69c677bbaad78a7153630e9370b4137c9489569ab",
-        "Archive(1).zip": "f81f07e4b9f4de983d07f3dcc30240a3da660059510c98cd1da7de93eda488c7",
-        "8-Dimention Model Sources-Part 1.zip": "e392ef0934ff2d3dd9fe9dfea4096b431ec35c0b69446329bc0f3eaa0ebe1f33",
-        "8-Dimention Model Sources-Part 2(1).zip": "3b3b9744fe444b22957a9bf40ba3a4c65da256a1efac3c6929956a8c36e59201"
-    },
-    "test_result": "95/95 passed",
-    "files": files,
-}
-(ROOT / "manifest.json").write_text(json.dumps(manifest, indent=2), encoding="utf-8")
-print(f"wrote {ROOT / 'manifest.json'} with {len(files)} files")
+
+def build_manifest() -> dict:
+    return {
+        "schema": "upg.batch-k-artifact-manifest.v1",
+        "scope": "complete repository files from git tracked/untracked-nonignored inventory",
+        "path_root": "repository root",
+        "hash_algorithm": "sha256",
+        "legacy_manifest": {
+            "path": "batches/K-real-data-evidence/evidence/manifest.json",
+            "policy": "frozen historical upload manifest; never rewritten here",
+        },
+        "excluded": [
+            "batches/K-real-data-evidence/artifact_manifest.json",
+            "git-ignored files and directories",
+        ],
+        "files": inventory(),
+    }
+
+
+def serialized(manifest: dict) -> str:
+    return json.dumps(manifest, indent=2, ensure_ascii=False) + "\n"
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    mode = parser.add_mutually_exclusive_group()
+    mode.add_argument("--write", action="store_true",
+                      help="explicitly replace artifact_manifest.json")
+    mode.add_argument("--check", action="store_true",
+                      help="verify the checked-in manifest (default)")
+    args = parser.parse_args()
+    current = serialized(build_manifest())
+    if args.write:
+        MANIFEST.write_text(current, encoding="utf-8")
+        print(f"wrote {MANIFEST} with {len(inventory())} repository files")
+        return 0
+    if not MANIFEST.is_file():
+        print(f"missing {MANIFEST}; run with --write")
+        return 1
+    recorded = MANIFEST.read_text(encoding="utf-8")
+    if recorded != current:
+        print(f"stale {MANIFEST}; inspect changes, then run with --write")
+        return 1
+    print(f"verified {MANIFEST} ({len(inventory())} repository files)")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

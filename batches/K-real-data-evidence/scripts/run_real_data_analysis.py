@@ -13,6 +13,7 @@ only aggregate or explicitly de-identified derived outputs are written.
 
 from __future__ import annotations
 
+import argparse
 import csv
 import hashlib
 import json
@@ -33,11 +34,19 @@ import sklearn
 from sklearn.linear_model import Ridge
 from sklearn.preprocessing import StandardScaler
 
+from upg.chronology import (anchor_transitions, consecutive_ar1,
+                            consecutive_pair_count)
+from upg.data_paths import (PUBLIC_REQUIRED, PublicDataLayoutError,
+                            resolve_public_data_root)
+from upg.run_output import atomic_output_run
 
-ROOT = Path("/workspace/batch-k-run/work")
-DATA = ROOT / "data" / "retrospective_v1"
-OUT = ROOT / "results" / "real_data"
-OUT.mkdir(parents=True, exist_ok=True)
+
+REPO_ROOT = Path(__file__).resolve().parents[3]
+BATCH_ROOT = Path(__file__).resolve().parents[1]
+DATA: Path | None = None
+# Never overwrite the frozen, chronology-invalid legacy artifacts in
+# results/real_data.  A corrected rerun is an explicit future study action.
+OUT = BATCH_ROOT / "results" / "real_data_corrected" / "v3_calendar"
 
 SEED = 20260712
 
@@ -128,6 +137,7 @@ FACET_NAMES = [
 
 
 def analyze_ipip() -> dict:
+    assert DATA is not None
     path = DATA / "ipip_neo_johnson" / "data_120_300" / "IPIP120.dat"
     raw = np.memmap(path, dtype=np.uint8, mode="r")
     if raw.size % 153:
@@ -161,7 +171,7 @@ def analyze_ipip() -> dict:
         scores[answered < 17] = np.nan  # ceil(.70 * 24)
         domain_scores[:, domain] = scores.astype(np.float32)
         observed_sd = float(np.nanstd(scores, ddof=1))
-        measurement_sd = observed_sd * math.sqrt((1.0 - alpha) / alpha)
+        measurement_sd = observed_sd * math.sqrt(1.0 - alpha)
         domain_alphas.append(alpha)
         domain_rows.append(
             {
@@ -171,7 +181,7 @@ def analyze_ipip() -> dict:
                 "complete_records_for_alpha": complete_n,
                 "cronbach_alpha": alpha,
                 "observed_score_sd": observed_sd,
-                "reliability_derived_measurement_sd": measurement_sd,
+                "classical_test_theory_sem": measurement_sd,
             }
         )
 
@@ -309,11 +319,24 @@ def me_item_matrix(frame: pd.DataFrame) -> pd.DataFrame:
 
 
 def ar1_coefficient(series: pd.Series, minimum: int = 8) -> float:
-    values = series.dropna().to_numpy(dtype=float)
-    if len(values) < minimum:
-        return math.nan
-    design = np.column_stack([np.ones(len(values) - 1), values[:-1]])
-    return float(np.linalg.lstsq(design, values[1:], rcond=None)[0][1])
+    """Calendar-safe AR(1) using observed t-1→t pairs only."""
+    if not isinstance(series.index, pd.DatetimeIndex):
+        raise TypeError("AR(1) series must have a DatetimeIndex")
+    return consecutive_ar1(
+        [stamp.date() for stamp in series.index],
+        series.to_numpy(dtype=float),
+        minimum_pairs=minimum,
+    )
+
+
+def ar1_pair_count(series: pd.Series) -> int:
+    """Number of valid observed consecutive-day pairs available to AR(1)."""
+    if not isinstance(series.index, pd.DatetimeIndex):
+        raise TypeError("AR(1) series must have a DatetimeIndex")
+    return consecutive_pair_count(
+        [stamp.date() for stamp in series.index],
+        series.to_numpy(dtype=float),
+    )
 
 
 def nested_ridge_alpha(x: np.ndarray, y: np.ndarray) -> float:
@@ -334,6 +357,7 @@ def nested_ridge_alpha(x: np.ndarray, y: np.ndarray) -> float:
 
 
 def analyze_kossakowski() -> dict:
+    assert DATA is not None
     path = DATA / "kossakowski_esm" / "ESMdata" / "ESMdata.csv"
     raw = pd.read_csv(path)
     raw_rows = int(len(raw))
@@ -349,7 +373,7 @@ def analyze_kossakowski() -> dict:
     data["me_item_coverage"] = answered / len(ME_ITEMS)
     alpha, alpha_n = cronbach_alpha_complete(matrix.to_numpy(dtype=float))
     observed_sd = float(data["me_load"].std(ddof=1))
-    measurement_sd = observed_sd * math.sqrt((1.0 - alpha) / alpha)
+    measurement_sd = observed_sd * math.sqrt(1.0 - alpha)
 
     scl_items = [column for column in data.columns if column.startswith("SCL.90.R.")]
     if len(scl_items) != 13:
@@ -357,55 +381,83 @@ def analyze_kossakowski() -> dict:
     data["weekly_dep"] = data[scl_items].mean(axis=1, skipna=True) / 4.0
     data.loc[data[scl_items].notna().sum(axis=1) < 10, "weekly_dep"] = np.nan
 
+    data["calendar_date"] = pd.to_datetime(
+        data["date"], format="%d/%m/%y", errors="raise"
+    ).dt.normalize()
+    documented_day = pd.to_numeric(data["dayno"], errors="raise").astype(int)
+    if not bool((data["calendar_date"].dt.dayofyear == documented_day).all()):
+        raise ValueError("date and dayno disagree in the Kossakowski archive")
+
     daily = (
-        data.groupby("dayno", sort=True)
+        data.groupby("calendar_date", sort=True)
         .agg(
             me_load=("me_load", "mean"),
             concentration=("concentrat", "first"),
             phase=("phase", "first"),
+            source_dayno=("dayno", "first"),
         )
         .sort_index()
     )
     weekly = (
         data.loc[data["weekly_dep"].notna()]
-        .groupby("dayno", sort=True)["weekly_dep"]
-        .first()
+        .groupby("calendar_date", sort=True)
+        .agg(weekly_dep=("weekly_dep", "first"), source_dayno=("dayno", "first"))
         .sort_index()
-        .to_frame()
     )
+    if not daily.index.is_monotonic_increasing or not weekly.index.is_monotonic_increasing:
+        raise ValueError("calendar aggregation did not produce monotonic dates")
 
     weekly["me_7day"] = np.nan
     weekly["ar1_21day"] = np.nan
+    weekly["ar1_21day_valid_consecutive_pairs"] = 0
     weekly["variance_21day"] = np.nan
     for day in weekly.index:
-        window7 = daily.loc[(daily.index >= day - 6) & (daily.index <= day), "me_load"]
+        window7 = daily.loc[
+            (daily.index >= day - pd.Timedelta(days=6)) & (daily.index <= day),
+            "me_load",
+        ]
         if window7.notna().sum() >= 3:
             weekly.loc[day, "me_7day"] = float(window7.mean())
-        window21 = daily.loc[(daily.index >= day - 20) & (daily.index <= day), "me_load"]
+        window21 = daily.loc[
+            (daily.index >= day - pd.Timedelta(days=20)) & (daily.index <= day),
+            "me_load",
+        ]
+        weekly.loc[day, "ar1_21day_valid_consecutive_pairs"] = ar1_pair_count(window21)
         weekly.loc[day, "ar1_21day"] = ar1_coefficient(window21, minimum=8)
         if window21.notna().sum() >= 8:
             weekly.loc[day, "variance_21day"] = float(window21.var(ddof=1))
-    weekly["next_week_change"] = weekly["weekly_dep"].shift(-1) - weekly["weekly_dep"]
+    weekly["target_date"] = pd.NaT
+    weekly["horizon_days"] = np.nan
+    weekly["horizon_label"] = None
+    for transition in anchor_transitions([stamp.date() for stamp in weekly.index]):
+        current = pd.Timestamp(transition.current)
+        weekly.loc[current, "target_date"] = pd.Timestamp(transition.target)
+        weekly.loc[current, "horizon_days"] = transition.horizon_days
+        weekly.loc[current, "horizon_label"] = transition.horizon_label
+    weekly["next_anchor_change"] = weekly["weekly_dep"].shift(-1) - weekly["weekly_dep"]
 
     concurrent_rho, concurrent_n, concurrent_p = finite_spearman(
         weekly["me_7day"], weekly["weekly_dep"]
     )
-    ar_rho, ar_n, ar_p = finite_spearman(weekly["ar1_21day"], weekly["next_week_change"])
+    ar_rho, ar_n, ar_p = finite_spearman(weekly["ar1_21day"], weekly["next_anchor_change"])
     variance_rho, variance_n, variance_p = finite_spearman(
-        weekly["variance_21day"], weekly["next_week_change"]
+        weekly["variance_21day"], weekly["next_anchor_change"]
     )
     dose_rho, dose_n, dose_p = finite_spearman(daily["concentration"], daily["me_load"])
 
     concurrent_ci = circular_block_ci(weekly["me_7day"], weekly["weekly_dep"], 4, 5000)
-    ar_ci = circular_block_ci(weekly["ar1_21day"], weekly["next_week_change"], 4, 5000)
+    ar_ci = circular_block_ci(weekly["ar1_21day"], weekly["next_anchor_change"], 4, 5000)
     variance_ci = circular_block_ci(
-        weekly["variance_21day"], weekly["next_week_change"], 4, 5000
+        weekly["variance_21day"], weekly["next_anchor_change"], 4, 5000
     )
 
-    # Expanding-window, one-step-ahead prediction. Every test point occurs
-    # strictly after its training points. Persistence is the declared comparator.
+    # Expanding-window, next-anchor prediction. Every row carries its exact
+    # source date, target date, and calendar gap; no 14/21-day gap is called
+    # "next week". Every test point occurs strictly after its training points.
     transitions = weekly[["weekly_dep", "me_7day", "ar1_21day"]].copy()
     transitions["target"] = weekly["weekly_dep"].shift(-1)
+    transitions["target_date"] = weekly["target_date"]
+    transitions["horizon_days"] = weekly["horizon_days"]
     transitions = transitions.dropna()
     x = transitions[["weekly_dep", "me_7day", "ar1_21day"]].to_numpy(dtype=float)
     y = transitions["target"].to_numpy(dtype=float)
@@ -413,7 +465,9 @@ def analyze_kossakowski() -> dict:
     persistence: list[float] = []
     truth: list[float] = []
     alphas: list[float] = []
-    forecast_days: list[int] = []
+    forecast_dates: list[str] = []
+    target_dates: list[str] = []
+    horizon_days: list[int] = []
     initial_training = 10
     for test in range(initial_training, len(y)):
         alpha_selected = nested_ridge_alpha(x[:test], y[:test])
@@ -423,7 +477,9 @@ def analyze_kossakowski() -> dict:
         persistence.append(float(x[test, 0]))
         truth.append(float(y[test]))
         alphas.append(alpha_selected)
-        forecast_days.append(int(transitions.index[test]))
+        forecast_dates.append(transitions.index[test].date().isoformat())
+        target_dates.append(pd.Timestamp(transitions.iloc[test]["target_date"]).date().isoformat())
+        horizon_days.append(int(transitions.iloc[test]["horizon_days"]))
     predictions_a = np.asarray(predictions)
     persistence_a = np.asarray(persistence)
     truth_a = np.asarray(truth)
@@ -431,11 +487,24 @@ def analyze_kossakowski() -> dict:
     persistence_mae = float(np.mean(np.abs(persistence_a - truth_a)))
     model_rmse = float(np.sqrt(np.mean((predictions_a - truth_a) ** 2)))
     persistence_rmse = float(np.sqrt(np.mean((persistence_a - truth_a) ** 2)))
+    forecast_by_horizon_days = {}
+    horizon_array = np.asarray(horizon_days)
+    for gap in sorted(set(horizon_days)):
+        selected = horizon_array == gap
+        forecast_by_horizon_days[str(gap)] = {
+            "n": int(selected.sum()),
+            "model_mae": float(np.mean(np.abs(predictions_a[selected] - truth_a[selected]))),
+            "persistence_mae": float(np.mean(np.abs(persistence_a[selected] - truth_a[selected]))),
+            "model_rmse": float(np.sqrt(np.mean((predictions_a[selected] - truth_a[selected]) ** 2))),
+            "persistence_rmse": float(np.sqrt(np.mean((persistence_a[selected] - truth_a[selected]) ** 2))),
+        }
 
     forecast_table = pd.DataFrame(
         {
-            "current_dayno": forecast_days,
-            "observed_next_week_dep": truth,
+            "current_date": forecast_dates,
+            "target_date": target_dates,
+            "horizon_days": horizon_days,
+            "observed_next_anchor_dep": truth,
             "ridge_prediction": predictions,
             "persistence_prediction": persistence,
             "ridge_alpha_selected_inside_training_window": alphas,
@@ -447,7 +516,7 @@ def analyze_kossakowski() -> dict:
     phase_daily = daily.groupby("phase")["me_load"].mean()
     phase_weekly = (
         data.loc[data["weekly_dep"].notna()]
-        .groupby(["phase", "dayno"])["weekly_dep"]
+        .groupby(["phase", "calendar_date"])["weekly_dep"]
         .first()
         .groupby("phase")
         .mean()
@@ -474,9 +543,14 @@ def analyze_kossakowski() -> dict:
     axes[1].plot(positions, predictions_a, "o--", color="#a34a28", label="Ridge")
     axes[1].plot(positions, persistence_a, "o:", color="#6d7b83", label="Persistence")
     axes[1].set_xticks(positions)
-    axes[1].set_xticklabels(forecast_days, rotation=45)
-    axes[1].set_xlabel("Current day number")
-    axes[1].set_ylabel("Next weekly depression")
+    axes[1].set_xticklabels(
+        [f"{current}\n→ {target} ({gap}d)"
+         for current, target, gap in zip(forecast_dates, target_dates, horizon_days)],
+        rotation=45,
+        ha="right",
+    )
+    axes[1].set_xlabel("Calendar-date forecast origin and exact horizon")
+    axes[1].set_ylabel("Next-anchor depression")
     axes[1].set_title("Strict rolling-origin forecast audit")
     axes[1].legend(frameon=False, ncol=3)
     fig.savefig(OUT / "kossakowski_real_data_audit.png", dpi=180)
@@ -497,20 +571,29 @@ def analyze_kossakowski() -> dict:
         "me_complete_occasion_alpha": alpha,
         "complete_occasions_for_alpha": alpha_n,
         "me_observed_sd": observed_sd,
-        "me_reliability_derived_measurement_sd": measurement_sd,
+        "me_classical_test_theory_sem": measurement_sd,
         "concurrent_7day_me_vs_weekly_dep": {
             "spearman_rho": concurrent_rho,
             "n": concurrent_n,
             "p_value_descriptive": concurrent_p,
             "circular_block_95pct_interval": concurrent_ci,
         },
-        "ar1_21day_vs_next_week_dep_change": {
+        "anchor_gap_days": {
+            str(int(gap)): int(count)
+            for gap, count in weekly["horizon_days"].dropna().value_counts().sort_index().items()
+        },
+        "ar1_21day_vs_next_anchor_dep_change": {
+            "minimum_valid_consecutive_day_pairs": 8,
+            "valid_consecutive_day_pairs_by_anchor": [
+                int(value)
+                for value in weekly["ar1_21day_valid_consecutive_pairs"].tolist()
+            ],
             "spearman_rho": ar_rho,
             "n": ar_n,
             "p_value_descriptive": ar_p,
             "circular_block_95pct_interval": ar_ci,
         },
-        "variance_21day_vs_next_week_dep_change": {
+        "variance_21day_vs_next_anchor_dep_change": {
             "spearman_rho": variance_rho,
             "n": variance_n,
             "p_value_descriptive": variance_p,
@@ -532,6 +615,7 @@ def analyze_kossakowski() -> dict:
             "persistence_rmse": persistence_rmse,
             "model_beats_persistence_mae": model_mae < persistence_mae,
             "model_beats_persistence_rmse": model_rmse < persistence_rmse,
+            "by_exact_horizon_days": forecast_by_horizon_days,
         },
         "phase_descriptives": phase_rows,
         "claim_boundary": (
@@ -542,11 +626,15 @@ def analyze_kossakowski() -> dict:
     }
 
 
-def main() -> None:
+def run_analysis() -> dict:
     ipip = analyze_ipip()
     kossakowski = analyze_kossakowski()
     summary = {
-        "analysis_id": "batch-k-retrospective-v2",
+        "analysis_id": "batch-k-retrospective-v3-calendar-corrected",
+        "chronology_contract": (
+            "full calendar dates, strictly increasing anchor order, and exact "
+            "source-to-target horizon_days on every forecast"
+        ),
         "seed": SEED,
         "software": {
             "python": platform.python_version(),
@@ -571,7 +659,7 @@ def main() -> None:
         ["K-EMP-01", "IPIP domain scores are internally consistent in this archive", "E2 retrospective cross-sectional", "supported", "IPIP domain alpha .817–.905"],
         ["K-EMP-02", "A five-component solution exactly recovers every IPIP facet", "E2 retrospective cross-sectional", "falsified", f"{ipip['facets_recovered_by_primary_varimax_loading']}/30 primary loadings"],
         ["K-EMP-03", "The transparent ME load tracks concurrent weekly depression in this person", "E2 retrospective N=1", "supported_narrowly", f"rho={kossakowski['concurrent_7day_me_vs_weekly_dep']['spearman_rho']:.3f}"],
-        ["K-EMP-04", "Rolling AR(1) predicts next-week depression change in this person", "E2 retrospective N=1", "not_supported", f"rho={kossakowski['ar1_21day_vs_next_week_dep_change']['spearman_rho']:.3f}"],
+        ["K-EMP-04", "Rolling AR(1) predicts next-anchor depression change in this person", "E2 retrospective N=1", "not_supported", f"rho={kossakowski['ar1_21day_vs_next_anchor_dep_change']['spearman_rho']:.3f}"],
         ["K-EMP-05", "The small multivariable model beats persistence prospectively within the series", "E2 rolling-origin N=1", "not_supported", f"RMSE {kossakowski['rolling_origin_forecast']['model_rmse']:.3f} vs {kossakowski['rolling_origin_forecast']['persistence_rmse']:.3f}"],
         ["K-EMP-06", "The complete UPG is clinically validated", "E3 prospective required", "not_tested", "No full-stratum prospective cohort or trial"],
     ]
@@ -581,6 +669,58 @@ def main() -> None:
         writer.writerows(claims)
 
     print(json.dumps(summary, indent=2, ensure_ascii=False))
+    return summary
+
+
+def main(argv: list[str] | None = None) -> None:
+    global DATA, OUT
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--data-root", type=Path,
+        help="public input root (precedence: explicit path, "
+             "UPG_PUBLIC_DATA_ROOT, sibling upg-data/redistributable)",
+    )
+    parser.add_argument(
+        "--out", type=Path, default=OUT,
+        help="new, nonexistent versioned output directory; defaults to "
+             "results/real_data_corrected/v3_calendar",
+    )
+    args = parser.parse_args(argv)
+    try:
+        DATA = resolve_public_data_root(repo_root=REPO_ROOT, explicit=args.data_root)
+    except PublicDataLayoutError as exc:
+        parser.error(str(exc))
+    assert DATA is not None
+    final_out = args.out.expanduser().resolve()
+    required = tuple(DATA / relative for relative in PUBLIC_REQUIRED)
+    protected = (
+        BATCH_ROOT / "results" / "real_data",
+        BATCH_ROOT / "evidence" / "audit",
+    )
+    inputs = {
+        "ipip_neo_120": required[0],
+        "kossakowski_esm": required[1],
+        "analysis_script": Path(__file__),
+        "chronology_helper": REPO_ROOT / "src" / "upg" / "chronology.py",
+        "data_path_helper": REPO_ROOT / "src" / "upg" / "data_paths.py",
+        "output_helper": REPO_ROOT / "src" / "upg" / "run_output.py",
+        "project_metadata": REPO_ROOT / "pyproject.toml",
+        "environment_lock": REPO_ROOT / "uv.lock",
+    }
+    try:
+        with atomic_output_run(
+            final_out,
+            protected_dirs=protected,
+            inputs=inputs,
+            metadata={
+                "analysis_id": "batch-k-retrospective-v3-calendar-corrected",
+                "seed": SEED,
+            },
+        ) as temporary:
+            OUT = temporary
+            run_analysis()
+    except (FileExistsError, PermissionError, RuntimeError) as exc:
+        parser.error(str(exc))
 
 
 if __name__ == "__main__":

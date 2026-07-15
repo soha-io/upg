@@ -1,0 +1,20 @@
+{
+  "schema": "upg.batch-k-chronology-quarantine.v1",
+  "status": "active",
+  "reason": "day-of-year sorting across 2012/2013 invalidated chronology and next-week labels ignored 7/14/21-day gaps",
+  "replacement_output_namespace": "results/real_data_corrected/v3_calendar",
+  "replacement_status": "not yet run or independently verified",
+  "frozen_files": [
+    {"path": "results/real_data/real_data_summary.json", "sha256": "721b5cae9f4628e4f611f3df4641c5d932450ccad0c65e21846696684f7d34e3"},
+    {"path": "results/real_data/empirical_claims.csv", "sha256": "b93b5b3f19495cb18414086ddfc962c79249c07245b2a6cc00c9bc52a33c0f24"},
+    {"path": "results/real_data/kossakowski_phase_summary.csv", "sha256": "01faf87be6e3ac4de4be7d2f777fd01374e639a8a356a9bf7755de7fcf12200f"},
+    {"path": "results/real_data/kossakowski_rolling_forecasts.csv", "sha256": "afe78481e1b193f1549ac3f9214096bf8b5c99d8de6d85524472c0b946f97120"},
+    {"path": "results/real_data/kossakowski_weekly_derived.csv", "sha256": "686536226ae599ca118d5f43b6cdc1034459f96ef74b9fb77ce383afb1c0fe9e"},
+    {"path": "results/real_data/kossakowski_real_data_audit.png", "sha256": "9da2713341c0fb7e68e20e6a719ba8163cd2dd92f4b3e78521135168c4d81fd1"},
+    {"path": "figures/figK2_me_load_depression_forecast.png", "sha256": "9da2713341c0fb7e68e20e6a719ba8163cd2dd92f4b3e78521135168c4d81fd1"},
+    {"path": "manuscript_K.md", "sha256": "332a7bbe3af8fbf4d0f4708f72627338f7afd8e9fb650fcb612280cd2d37535e"},
+    {"path": "manuscript_K.docx", "sha256": "b001861a911512490d10c6b4aeb94d9ab5411bba4ab90ac3821dab794ddd174d"},
+    {"path": "evidence/batch-k-report.html", "sha256": "d4ea08b7810632fe850a47051b90b84992626a12906060f64b35479693d4332c"},
+    {"path": "evidence/batch_k_claim_ledger.csv", "sha256": "e88b2c5ed19320e443dfe6f653b9229294e74f64a68b6a77feb4950de06b4b94"}
+  ]
+}

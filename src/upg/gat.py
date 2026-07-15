@@ -24,9 +24,9 @@ Design of record (from the transformer reading notes, ``docs/transformers``):
     one forward pass — a learned, prior-informed estimator whose implicit
     shrinkage is *fit to the generative family* rather than hand-chosen.
   * **Calibrated uncertainty** (note 13; baseline contract): every edge
-    ships a heteroscedastic Gaussian head in log-deviation space, so the
-    estimator returns per-edge credible intervals whose empirical coverage
-    is measured, not asserted.
+    ships a supervised heteroscedastic Gaussian head in log-deviation space,
+    so the estimator returns per-edge uncertainty intervals whose empirical
+    coverage is measured, not asserted.  These are not Bayesian posteriors.
 
 The estimator assumes ``kappa`` known, like every estimator in this package
 (only kappa*B is identifiable; see ``recover.py``).
@@ -138,7 +138,7 @@ class GATConfig:
     lam_abs: float = 5.0     # absolute-scale edge MSE (ties loss to benchmark)
     lam_g: float = 1.0       # treatment-gain log-deviation MSE
     lam_b: float = 5.0       # standing-condition MSE
-    level: float = 0.90      # credible-interval level for coverage reporting
+    level: float = 0.90      # supervised uncertainty-interval coverage level
     sigma0: float = 0.15     # initial edge sd in log space (= population edge_sigma)
 
     def as_dict(self) -> dict:
@@ -179,6 +179,24 @@ def _z_from_level(level: float) -> float:
     return 0.5 * (lo + hi)
 
 
+def _require_finite(name: str, value: np.ndarray) -> None:
+    if not np.all(np.isfinite(value)):
+        raise FloatingPointError(f"non-finite {name}; refusing OOD estimate")
+
+
+def _finite_exp(name: str, value: np.ndarray) -> np.ndarray:
+    _require_finite(f"{name} exponential input", value)
+    try:
+        with np.errstate(over="raise", invalid="raise", under="ignore"):
+            result = np.exp(value)
+    except FloatingPointError as exc:
+        raise FloatingPointError(
+            f"non-finite {name} exponential output; refusing OOD estimate"
+        ) from exc
+    _require_finite(f"{name} exponential output", result)
+    return result
+
+
 class MaskedGraphAttentionEstimator:
     """Skeleton-masked attention over variate tokens -> (B_hat, g_hat, b_hat)."""
 
@@ -186,7 +204,11 @@ class MaskedGraphAttentionEstimator:
         self.config = config or GATConfig()
         if base is None:
             base = dimension_base()
-        self.B0, self.g0, self.dims, _k = base
+        self.B0, self.g0, self.dims, self.base_kappa = base
+        self.B0 = np.asarray(self.B0, dtype=float).copy()
+        self.g0 = np.asarray(self.g0, dtype=float).copy()
+        self.dims = list(self.dims)
+        self.base_kappa = float(self.base_kappa)
         self.n = len(self.dims)
         self.tgt, self.src = edge_list(self.B0)
         self.E = len(self.tgt)
@@ -358,8 +380,9 @@ class MaskedGraphAttentionEstimator:
 
         opt = Adam(self.param_list(), lr=c.lr)
         # Seed early stopping with the *initial* state (= the consensus prior,
-        # by zero-init): training can therefore never end worse than the prior
-        # on validation — rule W7 as a training guarantee.
+        # by zero-init): the returned checkpoint cannot be worse on this
+        # composite validation objective.  This is not a guarantee for every
+        # held-out metric or test cell.
         best_val = float(self._loss(batch_va).data)
         best_state = self._state_dict()
         best_epoch = -1
@@ -396,9 +419,18 @@ class MaskedGraphAttentionEstimator:
                  kappa: float) -> GATPerson:
         node_f, edge_f, glob_f = person_features(observations, u, kappa, self.B0)
         node, edge, glob = self._prep([(node_f, edge_f, glob_f)])
+        _require_finite("standardized node features", node)
+        _require_finite("standardized edge features", edge)
+        _require_finite("standardized global features", glob)
         mu, sigma, dg, b_hat = self._forward(node, edge, glob)
         mu = mu.data[0]; sigma = sigma.data[0]
         dg = dg.data[0]; b_vec = b_hat.data[0]
+        _require_finite("edge log-deviation head", mu)
+        _require_finite("edge uncertainty head", sigma)
+        _require_finite("gain log-deviation head", dg)
+        _require_finite("standing-condition head", b_vec)
+        if np.any(sigma <= 0.0):
+            raise FloatingPointError("non-positive edge uncertainty; refusing estimate")
 
         B_hat = np.zeros_like(self.B0)
         B_sd = np.zeros_like(self.B0)
@@ -406,13 +438,23 @@ class MaskedGraphAttentionEstimator:
         B_hi = np.zeros_like(self.B0)
         prior = self.B0[self.tgt, self.src]
         z = _z_from_level(self.config.level)
-        B_hat[self.tgt, self.src] = prior * np.exp(mu)
-        B_sd[self.tgt, self.src] = prior * np.exp(mu) * sigma     # delta-method sd
-        B_lo[self.tgt, self.src] = prior * np.exp(mu - z * sigma)
-        B_hi[self.tgt, self.src] = prior * np.exp(mu + z * sigma)
+        point = prior * _finite_exp("edge point", mu)
+        endpoint_a = prior * _finite_exp("edge lower endpoint", mu - z * sigma)
+        endpoint_b = prior * _finite_exp("edge upper endpoint", mu + z * sigma)
+        _require_finite("edge point estimate", point)
+        _require_finite("edge interval endpoints", np.concatenate([endpoint_a, endpoint_b]))
+        B_hat[self.tgt, self.src] = point
+        # Scale is non-negative even when a theory edge is inhibitory.  The
+        # multiplicative transform reverses endpoint order for a negative
+        # prior, so order the endpoints explicitly.
+        B_sd[self.tgt, self.src] = np.abs(point) * sigma          # delta-method sd
+        B_lo[self.tgt, self.src] = np.minimum(endpoint_a, endpoint_b)
+        B_hi[self.tgt, self.src] = np.maximum(endpoint_a, endpoint_b)
+        _require_finite("edge uncertainty scale", B_sd)
 
         g_hat = self.g0.copy()
-        g_hat[self.g_nodes] = self.g0[self.g_nodes] * np.exp(dg)
+        g_hat[self.g_nodes] = self.g0[self.g_nodes] * _finite_exp("gain", dg)
+        _require_finite("gain estimate", g_hat)
 
         present = ~np.isnan(observations).any(axis=1)
         n_tr = int(np.sum(present[:-1] & present[1:]))
@@ -433,20 +475,51 @@ class MaskedGraphAttentionEstimator:
         arrays = {f"p_{k}": v.data for k, v in self.params.items()}
         arrays.update(node_mu=self.node_mu, node_sd=self.node_sd,
                       edge_mu=self.edge_mu, edge_sd=self.edge_sd,
-                      glob_mu=self.glob_mu, glob_sd=self.glob_sd)
+                      glob_mu=self.glob_mu, glob_sd=self.glob_sd,
+                      base_B=self.B0, base_g=self.g0,
+                      base_dims=np.asarray(self.dims),
+                      base_kappa=np.asarray(self.base_kappa))
         np.savez_compressed(path, config=json.dumps(self.config.as_dict()),
                             **arrays)
 
     @classmethod
     def load(cls, path: str) -> "MaskedGraphAttentionEstimator":
-        z = np.load(path, allow_pickle=False)
-        config = GATConfig(**json.loads(str(z["config"])))
-        model = cls(config=config)
-        for k in model.params:
-            model.params[k].data = z[f"p_{k}"]
-        model.node_mu, model.node_sd = z["node_mu"], z["node_sd"]
-        model.edge_mu, model.edge_sd = z["edge_mu"], z["edge_sd"]
-        model.glob_mu, model.glob_sd = z["glob_mu"], z["glob_sd"]
+        with np.load(path, allow_pickle=False) as z:
+            for name in z.files:
+                value = z[name]
+                if (np.issubdtype(value.dtype, np.number)
+                        and not np.all(np.isfinite(value))):
+                    raise ValueError(
+                        f"checkpoint contains non-finite array {name}: {path}"
+                    )
+            config = GATConfig(**json.loads(str(z["config"])))
+            # Older published checkpoints did not store the skeleton and are
+            # intentionally kept loadable against the historical default.
+            base = None
+            if {"base_B", "base_g", "base_dims", "base_kappa"} <= set(z.files):
+                base = (z["base_B"].copy(), z["base_g"].copy(),
+                        z["base_dims"].astype(str).tolist(),
+                        float(z["base_kappa"]))
+            model = cls(config=config, base=base)
+            for k in model.params:
+                model.params[k].data = z[f"p_{k}"].copy()
+            model.node_mu, model.node_sd = z["node_mu"].copy(), z["node_sd"].copy()
+            model.edge_mu, model.edge_sd = z["edge_mu"].copy(), z["edge_sd"].copy()
+            model.glob_mu, model.glob_sd = z["glob_mu"].copy(), z["glob_sd"].copy()
+        for name, value in {
+            "base_B": model.B0,
+            "base_g": model.g0,
+            "base_kappa": np.asarray(model.base_kappa),
+            "node_mu": model.node_mu,
+            "node_sd": model.node_sd,
+            "edge_mu": model.edge_mu,
+            "edge_sd": model.edge_sd,
+            "glob_mu": model.glob_mu,
+            "glob_sd": model.glob_sd,
+            **{f"parameter {key}": tensor.data for key, tensor in model.params.items()},
+        }.items():
+            if not np.all(np.isfinite(value)):
+                raise ValueError(f"checkpoint contains non-finite {name}: {path}")
         return model
 
 
@@ -459,11 +532,11 @@ def build_training_set(preset: str, n_persons: int, seed: int,
                        T_grid=(30, 60, 120, 250), base: tuple | None = None):
     """Simulate a training population and package (features, targets).
 
-    Each person is simulated once at every T in the grid (fresh noise and
-    missingness draws per length — note 06's dynamic-masking discipline), so
-    one model learns the whole data-budget range and can modulate its own
-    shrinkage with the amount of data it sees (note 41's learned
-    preconditioning).
+    A fresh population is simulated independently at every T in the grid,
+    using a deterministic T-specific seed.  Rows at different lengths are
+    therefore not matched observations of the same people.  One model learns
+    the whole data-budget range and can modulate its own shrinkage with the
+    amount of data it sees (note 41's learned preconditioning).
     """
     if base is None:
         base = dimension_base()
@@ -491,7 +564,7 @@ def build_training_set(preset: str, n_persons: int, seed: int,
 
 def gat_recover_dataset(dataset, model: MaskedGraphAttentionEstimator) -> dict:
     """Estimate every person in a dataset; per-person + aggregate metrics,
-    including credible-interval coverage on the true edges."""
+    including supervised uncertainty-interval coverage on the true edges."""
     from .recover import recovery_metrics
     base_B = model.B0
     sup = base_B != 0.0
