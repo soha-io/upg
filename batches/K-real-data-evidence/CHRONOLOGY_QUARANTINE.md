@@ -1,6 +1,6 @@
 # Batch K chronology quarantine
 
-Status: **active; legacy Kossakowski conclusions must not be used**.
+Status: **legacy quarantine active; corrected builder baseline generated**.
 
 The original retrospective script grouped and sorted observations by
 `dayno`, a day-of-year integer, across calendar years 2012 and 2013. This
@@ -40,6 +40,11 @@ The repaired script:
   No override can write within frozen `results/real_data/` or
   `evidence/audit/` namespaces.
 
-No corrected scientific result was generated during pre-study hardening. A
-future registered rerun must independently verify the corrected artifacts
-before any Kossakowski claim is restored.
+A corrected builder baseline was generated on 2026-07-16 from clean commit
+`1b5676de533b9cf16d7062605c836a5433a94653` and is recorded in
+`CORRECTED_BASELINE.md`. The result does not restore the legacy claims: the
+small rolling model did not beat persistence on MAE or RMSE. The immutable
+legacy files above remain quarantined, while the corrected output is eligible
+as a bounded baseline for subsequent study work. Independent review remains a
+later claim-acceptance step rather than a prerequisite for generating the next
+study iteration.

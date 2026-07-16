@@ -32,6 +32,12 @@ artifacts are frozen and quarantined because they sorted day-of-year across
 
 ## Key decisions
 
+Current claim boundary: numeric graph spectra and Fiedler partitions below are
+descriptive computations on the present consensus-prior registry. In
+particular, the legacy shorthand “λ₂ → one person, not eight” is not an
+empirical reduction, validity result, or person-level scientific claim; it is
+preserved only as historical project wording.
+
 - **Format:** article series (one paper per batch), composed into the full model in Batches J–K.
 - **Shared formalism:** signed, weighted graphs `G = (V, W)`; five axioms (connectivity, non-dismissibility, mediated/unmediated influence, self-loops, signed superposition); encapsulated subgraphs (communicate only via mother node).
 - **Time-gated weights** (introduced in Batch C): `w_ij(t) = g_ij(t) · w̄_ij` — sensitive periods, age-rising stability; inherited by later strata.
