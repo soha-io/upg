@@ -1168,6 +1168,11 @@
       "sha256": "d8e31b428e052041622792bb1356c790ffcd1bc2fc9dd9ae38a987efcdedb55d"
     },
     {
+      "path": "scripts/ipip_hierarchy_pilot.py",
+      "bytes": 47166,
+      "sha256": "852c03af78ca802316876fc4d1ffac953660c86da203787ce33b9532821f767d"
+    },
+    {
       "path": "scripts/make_synthetic.py",
       "bytes": 5898,
       "sha256": "113bb2450f1d21589a7500a803f8f00127bc9c9e54db48c5bf2a25d12b29f13e"
@@ -1431,6 +1436,11 @@
       "path": "tests/test_gat.py",
       "bytes": 9650,
       "sha256": "1bc5eb534f8920c6b67510c6f546cd91c697bd4791022c1311640e844f0d4c93"
+    },
+    {
+      "path": "tests/test_ipip_hierarchy_pilot.py",
+      "bytes": 10883,
+      "sha256": "02acb44a0f847b19c63320148dc12ab06395a622233b2187ff3fcd4e12f55537"
     },
     {
       "path": "tests/test_recover.py",
